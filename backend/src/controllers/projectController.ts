@@ -167,14 +167,16 @@ export const createProject = asyncHandler(async (req: AuthRequest, res: Response
     requester.id,
   );
 
-  // 2) 懒启动 Agent（失败时静默降级，不影响创建）
-  try {
-    const withAgent = await projectService.getOrCreateAgentForProject(project.id, {});
-    res.status(201).json(success(withAgent, '创建项目成功'));
-  } catch (err) {
-    // 兜底：返回原始项目对象
-    res.status(201).json(success(project, '创建项目成功（Agent 启动待补）'));
-  }
+  // 2) 立即返回项目，Agent 启动改为后台 best-effort。
+  // Demo/弱网场景下不能让外部 LLM 服务阻塞项目创建；用户仍可直接渲染初稿。
+  void projectService.getOrCreateAgentForProject(project.id, {}).catch((err) => {
+    console.warn(
+      `[projectController] 后台启动 Agent 失败: ${
+        err instanceof Error ? err.message : String(err)
+      }`,
+    );
+  });
+  res.status(201).json(success(project, '创建项目成功'));
 });
 
 /** 更新项目（校验 owner） */

@@ -168,7 +168,10 @@ export const usePipelineStore = create<PipelineState>((set, get) => ({
       try {
         const draftRes = await getDraftApi(projectId)
         if (draftRes?.data) {
-          set({ draftText: draftRes.data.draftText, template: draftRes.data.template })
+          set({
+            draftText: draftRes.data.draftText ?? draftRes.data.text ?? '',
+            template: draftRes.data.template,
+          })
         }
       } catch {
         // 草稿可能尚未生成，保持空
@@ -188,11 +191,15 @@ export const usePipelineStore = create<PipelineState>((set, get) => ({
       const res = await resumePipelineApi(projectId, { action, payload })
       const data = res?.data
       if (data) {
+        const result = (data as unknown as { result?: Partial<PipelineState> }).result
         set({
-          status: data.status,
-          currentStep: data.currentStep ?? null,
-          agentId: data.agentId ?? null,
-          artifacts: (data.artifacts as PipelineArtifacts) ?? emptyArtifacts(),
+          status: (result?.status as PipelineStatus | undefined) ?? get().status,
+          currentStep: (result?.currentStep as StageKey | undefined) ?? get().currentStep,
+          agentId:
+            ((data as unknown as { agentId?: string }).agentId ?? result?.agentId ?? null) as
+              | string
+              | null,
+          artifacts: (result?.artifacts as PipelineArtifacts | undefined) ?? get().artifacts,
           hilPending: null,
         })
         get().appendLog(`HIL 响应：${action}`, 'success', null)
@@ -253,7 +260,10 @@ export const usePipelineStore = create<PipelineState>((set, get) => ({
     try {
       const res = await renderDraftApi(projectId, target)
       if (res?.data) {
-        set({ draftText: res.data.draftText, template: res.data.template })
+        set({
+          draftText: res.data.draftText ?? res.data.text ?? '',
+          template: res.data.template,
+        })
         get().appendLog(`草稿已用模板 ${res.data.template} 重新渲染`, 'success', null)
       }
     } catch {
@@ -267,7 +277,10 @@ export const usePipelineStore = create<PipelineState>((set, get) => ({
     try {
       const res = await getDraftApi(projectId)
       if (res?.data) {
-        set({ draftText: res.data.draftText, template: res.data.template })
+        set({
+          draftText: res.data.draftText ?? res.data.text ?? '',
+          template: res.data.template,
+        })
       }
     } catch {
       // 草稿未生成时静默

@@ -4,7 +4,9 @@ import {
   fetchProjectsApi,
   fetchProjectApi,
   createProjectApi,
+  updateProjectApi,
   advanceStageApi,
+  type UpdateProjectPayload,
 } from '@/services/project'
 
 // 当前项目持久化 key（只存 id，刷新后从列表恢复）
@@ -36,6 +38,7 @@ interface ProjectState {
     mode?: 'auto' | 'manual'
     template?: 'ctex' | 'ieee' | 'journal' | 'markdown'
   }) => Promise<Project | null>
+  updateProject: (id: string, payload: UpdateProjectPayload) => Promise<Project | null>
   advanceStage: (projectId?: string) => Promise<void>
   pushHIL: (item: HILItem) => void
   resolveHIL: (id: string) => void
@@ -140,6 +143,26 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         return project
       }
       return null
+    } catch {
+      return null
+    }
+  },
+
+  updateProject: async (id, payload) => {
+    try {
+      const res = await updateProjectApi(id, payload)
+      if (!res?.data) return null
+      const updated = res.data
+      set((state) => ({
+        projects: state.projects.map((p) => (p.id === id ? updated : p)),
+        currentProject:
+          state.currentProject?.id === id ? updated : state.currentProject,
+        stage:
+          state.currentProject?.id === id
+            ? ((updated.stage ?? updated.currentStage ?? null) as StageKey | null)
+            : state.stage,
+      }))
+      return updated
     } catch {
       return null
     }

@@ -49,7 +49,10 @@ export interface HILResumePayload {
 // 草稿响应
 export interface DraftResponse {
   template: DraftTemplate
-  draftText: string
+  draftText?: string
+  text?: string
+  hasDraft?: boolean
+  updatedAt?: string
 }
 
 // 拉取流水线当前状态

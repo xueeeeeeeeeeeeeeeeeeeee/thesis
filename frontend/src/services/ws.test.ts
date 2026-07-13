@@ -106,8 +106,19 @@ describe('WSClient', () => {
     wsClient.connect()
     const sock = mockInstances[0]
     const payload = { stage: 'experiment', status: 'running' }
-    sock.onmessage!({ data: JSON.stringify({ event: 'pipeline_update', data: payload }) })
+    sock.onmessage!({ data: JSON.stringify({ type: 'pipeline_update', payload }) })
     expect(cb).toHaveBeenCalledTimes(1)
+    expect(cb).toHaveBeenCalledWith(payload)
+  })
+
+  it('onmessage 兼容旧 event/data 消息格式', async () => {
+    const { wsClient } = await loadModule()
+    const cb = vi.fn()
+    wsClient.on('pipeline_update', cb)
+    wsClient.connect()
+    const sock = mockInstances[0]
+    const payload = { stage: 'experiment', status: 'running' }
+    sock.onmessage!({ data: JSON.stringify({ event: 'pipeline_update', data: payload }) })
     expect(cb).toHaveBeenCalledWith(payload)
   })
 
@@ -138,7 +149,7 @@ describe('WSClient', () => {
     sock.readyState = 1 // OPEN
     wsClient.send('chat', { text: 'hello' })
     expect(sock.send).toHaveBeenCalledTimes(1)
-    expect(sock.send).toHaveBeenCalledWith(JSON.stringify({ event: 'chat', data: { text: 'hello' } }))
+    expect(sock.send).toHaveBeenCalledWith(JSON.stringify({ type: 'chat', payload: { text: 'hello' } }))
   })
 
   it('send 在非 OPEN 时不抛错也不发送', async () => {

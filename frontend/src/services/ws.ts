@@ -34,7 +34,8 @@ class WSClient {
     this.socket.onmessage = (event) => {
       try {
         const msg = JSON.parse(event.data)
-        const { event: evt, data } = msg
+        const evt = msg.type ?? msg.event
+        const data = msg.payload ?? msg.data
         if (evt && this.listeners.has(evt)) {
           this.listeners.get(evt)?.forEach((cb) => cb(data))
         }
@@ -67,7 +68,7 @@ class WSClient {
   // 发送消息
   send(event: string, data: unknown): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify({ event, data }))
+      this.socket.send(JSON.stringify({ type: event, payload: data }))
     }
   }
 

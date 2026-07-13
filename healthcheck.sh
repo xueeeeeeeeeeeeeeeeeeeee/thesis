@@ -48,12 +48,18 @@ else
     FAIL=1
 fi
 
-# 后端项目接口
-RESP=$(curl -s -m 5 http://localhost:3001/api/projects 2>/dev/null || echo "FAILED")
-if echo "$RESP" | grep -q "code"; then
+# 后端项目接口（需要登录，不能把 401 的 {"code":-1} 误判为正常）
+LOGIN=$(curl -s -m 5 \
+    -H 'Content-Type: application/json' \
+    -d "{\"email\":\"${ADMIN_EMAIL:-admin@rap.dev}\",\"password\":\"${ADMIN_PASSWORD:-admin123}\"}" \
+    http://localhost:3001/api/auth/login 2>/dev/null || echo "FAILED")
+TOKEN=$(echo "$LOGIN" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
+RESP=$(curl -s -m 5 -H "Authorization: Bearer $TOKEN" http://localhost:3001/api/projects 2>/dev/null || echo "FAILED")
+if echo "$RESP" | grep -q '"code":0'; then
     echo -e "  ${GREEN}✓${NC} 后端项目接口 (/api/projects)"
 else
     echo -e "  ${RED}✗${NC} 后端项目接口失败"
+    echo -e "     $RESP" | head -c 200
     FAIL=1
 fi
 
