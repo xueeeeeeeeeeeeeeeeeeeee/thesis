@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Auto-Pilot — UI 原型</title>
+<style>
+/* ============================================================
+   CSS Variables & Reset
+   ============================================================ */
+:root {
+  --primary: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --primary-bg: #eff6ff;
+  --green: #22c55e;
+  --green-bg: #f0fdf4;
+  --yellow: #eab308;
+  --yellow-bg: #fefce8;
+  --red: #ef4444;
+  --red-bg: #fef2f2;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+  --font-sans: 'PingFang SC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  --sidebar-w: 200px;
+  --topbar-h: 48px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--gray-100);
+  color: var(--gray-800);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow: hidden;
+  height: 100vh;
+}
+button {
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  transition: all 0.15s;
+}
+button:hover { opacity: 0.85; }
+button:active { transform: scale(0.97); }
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.app { display: flex; flex-direction: column; height: 100vh; }
+
+/* Topbar */
+.topbar {
+  height: var(--topbar-h);
+  background: #fff;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+  z-index: 100;
+}
+.topbar .logo {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--primary);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.topbar .logo .icon { font-size: 18px; }
+.topbar .project-select {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+.topbar .project-select:hover { border-color: var(--primary); }
+.topbar .spacer { flex: 1; }
+.topbar .ctrl-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: var(--radius);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.topbar .ctrl-btn.pause { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow); }
+.topbar .ctrl-btn.resume { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+.topbar .ctrl-btn.stop { background: var(--red-bg); color: var(--red); border: 1px solid var(--red); }
+.topbar .user-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--gray-100);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--gray-600);
+}
+.topbar .user-badge .avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Body */
+.body-wrap { display: flex; flex: 1; overflow: hidden; }
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-w);
+  background: #fff;
+  border-right: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+.sidebar .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  color: var(--gray-600);
+  cursor: pointer;
+  font-size: 13px;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+.sidebar .nav-item:hover { background: var(--gray-50); color: var(--gray-800); }
+.sidebar .nav-item.active {
+  background: var(--primary-bg);
+  color: var(--primary);
+  border-left-color: var(--primary);
+  font-weight: 600;
+}
+.sidebar .nav-divider {
+  height: 1px;
+  background: var(--gray-200);
+  margin: 8px 12px;
+}
+.sidebar .status-block {
+  padding: 12px 16px;
+  border-top: 1px solid var(--gray-200);
+  margin-top: auto;
+  font-size: 12px;
+}
+.sidebar .status-block .status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.sidebar .status-block .status-dot.running { background: var(--green); animation: pulse 2s infinite; }
+.sidebar .status-block .status-dot.hil { background: var(--yellow); animation: pulse 1.5s infinite; }
+.sidebar .status-block .status-dot.done { background: var(--gray-400); }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.sidebar .version-tag {
+  display: inline-block;
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+
+/* Main content */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  background: var(--gray-50);
+}
+.page { display: none; }
+.page.active { display: block; }
+
+/* ============================================================
+   Common Components
+   ============================================================ */
+.card {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.card-header {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--gray-800);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.badge.green { background: var(--green-bg); color: #15803d; }
+.badge.yellow { background: var(--yellow-bg); color: #a16207; }
+.badge.red { background: var(--red-bg); color: #b91c1c; }
+.badge.gray { background: var(--gray-100); color: var(--gray-500); }
+.badge.blue { background: var(--primary-bg); color: var(--primary); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-outline { background: #fff; color: var(--gray-700); border: 1px solid var(--gray-300); }
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+.btn-green { background: var(--green); color: #fff; }
+.btn-red { background: var(--red); color: #fff; }
+.btn-yellow { background: var(--yellow); color: #fff; }
+.btn-sm { padding: 3px 8px; font-size: 11px; }
+
+.input {
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  width: 100%;
+  transition: border-color 0.15s;
+  outline: none;
+}
+.input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+select.input {
+  appearance: none;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 10px center;
+  padding-right: 30px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+table th, table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--gray-200);
+}
+table th {
+  font-weight: 600;
+  color: var(--gray-500);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+table tr:hover td { background: var(--gray-50); }
+
+.progress-bar {
+  height: 4px;
+  background: var(--gray-200);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-bar .fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+.progress-bar .fill.green { background: var(--green); }
+.progress-bar .fill.blue { background: var(--primary); }
+
+/* ============================================================
+   Dashboard
+   ============================================================ */
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.dash-header h2 { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+.dash-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.dash-filters .input { max-width: 260px; }
+.dash-filters select { width: auto; }
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.project-card {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.project-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.project-card .pc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.project-card .pc-name { font-weight: 700; font-size: 14px; color: var(--gray-900); }
+.project-card .pc-domain { font-size: 11px; color: var(--gray-500); margin-bottom: 6px; }
+.project-card .pc-node { font-size: 11px; color: var(--gray-600); margin-bottom: 8px; }
+.project-card .pc-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-bottom: 8px;
+}
+.project-card .pc-progress { margin-bottom: 10px; }
+.project-card .pc-actions { display: flex; gap: 6px; }
+.dash-summary {
+  display: flex;
+  gap: 16px;
+}
+.dash-summary .sum-item {
+  flex: 1;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  text-align: center;
+}
+.dash-summary .sum-item .num { font-size: 20px; font-weight: 700; color: var(--gray-900); }
+.dash-summary .sum-item .label { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+/* ============================================================
+   Project Workspace
+   ============================================================ */
+.ws-header h2 { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+.ws-header .subtitle { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+/* State machine */
+.state-machine {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+}
+.state-machine .sm-title { font-size: 11px; color: var(--gray-500); margin-bottom: 8px; font-weight: 600; }
+.state-machine .sm-nodes { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; min-width: max-content; }
+.sm-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.sm-node .sm-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  margin-bottom: 3px;
+  border: 2px solid transparent;
+}
+.sm-node .sm-icon.done { background: #dcfce7; color: #15803d; border-color: var(--green); }
+.sm-node .sm-icon.current { background: #dbeafe; color: #1d4ed8; border-color: var(--primary); animation: pulse 2s infinite; }
+.sm-node .sm-icon.pending { background: var(--gray-100); color: var(--gray-400); border-color: var(--gray-200); }
+.sm-node .sm-icon.hil-done { background: #fef3c7; color: #a16207; border-color: var(--yellow); }
+.sm-node .sm-icon.hil-current { background: #fef3c7; color: #a16207; border-color: var(--yellow); animation: pulse 1.5s infinite; }
+.sm-node .sm-name { font-size: 9px; color: var(--gray-500); max-width: 60px; text-align: center; }
+.sm-arrow { margin: 0 2px; color: var(--gray-300); font-size: 12px; }
+
+.ws-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* Agent status */
+.agent-status .as-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.agent-status .as-metric {
+  background: var(--gray-50);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+}
+.agent-status .as-metric .val { font-size: 16px; font-weight: 700; color: var(--gray-900); }
+.agent-status .as-metric .lbl { font-size: 10px; color: var(--gray-500); }
+.agent-status .as-actions { display: flex; gap: 6px; }
+
+/* Artifacts */
+.artifact-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 12px;
+}
+.artifact-item .art-name { font-family: var(--font-mono); color: var(--gray-700); }
+.artifact-item .art-meta { font-size: 11px; color: var(--gray-400); }
+
+/* Log stream */
+.log-stream {
+  background: #1e293b;
+  color: #e2e8f0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border-radius: var(--radius);
+  padding: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+.log-stream .log-line { padding: 1px 0; }
+.log-stream .log-time { color: #94a3b8; margin-right: 8px; }
+.log-stream .log-tag { color: #7dd3fc; margin-right: 8px; }
+.log-stream .log-check { color: var(--green); }
+
+/* ============================================================
+   HIL Review
+   ============================================================ */
+.hil-header {
+  background: var(--yellow-bg);
+  border: 1px solid var(--yellow);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #92400e;
+}
+.hil-tabs { display: flex; gap: 2px; margin-bottom: 0; }
+.hil-tab {
+  padding: 8px 16px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--gray-500);
+}
+.hil-tab.active { background: #fff; color: var(--gray-800); font-weight: 600; border-color: var(--gray-200); }
+.hil-content {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 16px;
+  min-height: 200px;
+}
+.hil-note {
+  background: var(--primary-bg);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--gray-700);
+}
+.hil-comment textarea {
+  width: 100%;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius);
+  padding: 10px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  resize: vertical;
+  min-height: 60px;
+  outline: none;
+}
+.hil-comment textarea:focus { border-color: var(--primary); }
+.hil-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ============================================================
+   Literature
+   ============================================================ */
+.lit-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 12px;
+}
+.lit-list { max-height: 400px; overflow-y: auto; }
+.lit-item {
+  padding: 10px;
+  border-bottom: 1px solid var(--gray-100);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.lit-item:hover { background: var(--gray-50); }
+.lit-item.selected { background: var(--primary-bg); border-left: 3px solid var(--primary); }
+.lit-item .lit-title { font-weight: 600; font-size: 12px; color: var(--gray-800); }
+.lit-item .lit-authors { font-size: 11px; color: var(--gray-500); }
+.lit-item .lit-meta { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+.lit-item .lit-tags { margin-top: 4px; display: flex; gap: 4px; }
+.lit-detail .detail-section { margin-bottom: 12px; }
+.lit-detail .detail-section h4 { font-size: 12px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px; text-transform: uppercase; }
+.lit-detail .detail-abstract { font-size: 12px; color: var(--gray-700); line-height: 1.6; }
+.lit-detail .detail-chapters { font-size: 12px; color: var(--gray-600); }
+.lit-detail .detail-chapters li { padding: 3px 0; cursor: pointer; }
+.lit-detail .detail-chapters li:hover { color: var(--primary); }
+.lit-detail .detail-actions { display: flex; gap: 6px; margin-top: 12px; }
+.lit-preview {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--gray-700);
+}
+.lit-preview .cite-highlight { background: #fef3c7; padding: 1px 4px; border-radius: 2px; }
+
+/* ============================================================
+   Experiment Monitor
+   ============================================================ */
+.exp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.resource-bar {
+  margin-bottom: 8px;
+}
+.resource-bar .rb-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-bottom: 3px;
+}
+.resource-bar .rb-track {
+  height: 8px;
+  background: var(--gray-200);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.resource-bar .rb-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+.resource-bar .rb-fill.cpu { background: var(--primary); }
+.resource-bar .rb-fill.mem { background: #8b5cf6; }
+.resource-bar .rb-fill.gpu { background: var(--green); }
+.resource-bar .rb-fill.disk { background: var(--gray-400); }
+
+/* ============================================================
+   Paper Editor
+   ============================================================ */
+.editor-layout {
+  display: grid;
+  grid-template-columns: 180px 1fr 300px;
+  gap: 0;
+  height: calc(100vh - 180px);
+  min-height: 500px;
+}
+.editor-filetree {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  padding: 12px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.editor-filetree .ft-folder { color: var(--primary); font-weight: 600; margin: 6px 0 2px; }
+.editor-filetree .ft-file {
+  padding: 3px 8px;
+  color: var(--gray-600);
+  cursor: pointer;
+  border-radius: 3px;
+}
+.editor-filetree .ft-file:hover { background: var(--gray-100); }
+.editor-filetree .ft-file.active { background: var(--primary-bg); color: var(--primary); font-weight: 500; }
+.editor-code {
+  background: #1e293b;
+  border-top: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200);
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #e2e8f0;
+  line-height: 1.8;
+  overflow-y: auto;
+}
+.editor-code .kw { color: #c084fc; }
+.editor-code .cmd { color: #7dd3fc; }
+.editor-code .arg { color: #fbbf24; }
+.editor-code .comment { color: #64748b; font-style: italic; }
+.editor-preview {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  padding: 16px;
+  overflow-y: auto;
+}
+.editor-preview .pdf-title { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 12px; }
+.editor-preview .pdf-section { font-size: 14px; font-weight: 600; color: var(--gray-800); margin: 12px 0 6px; }
+.editor-preview .pdf-text { font-size: 12px; color: var(--gray-600); line-height: 1.8; }
+.editor-preview .pdf-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 11px;
+}
+.editor-preview .pdf-table th, .editor-preview .pdf-table td {
+  border: 1px solid var(--gray-200);
+  padding: 4px 8px;
+  text-align: center;
+}
+.editor-preview .pdf-figure {
+  border: 2px dashed var(--gray-300);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  color: var(--gray-400);
+  font-size: 12px;
+  margin: 8px 0;
+}
+.editor-actions {
+  display: flex;
+  gap: 6px;
+  padding: 8px 0;
+  justify-content: flex-end;
+}
+
+/* ============================================================
+   Version Management
+   ============================================================ */
+.version-tree {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+}
+.vt-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gray-50);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  white-space: nowrap;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+.vt-node:hover { border-color: var(--primary); }
+.vt-node.current { border-color: var(--primary); background: var(--primary-bg); }
+.vt-node.archived { opacity: 0.6; }
+.vt-arrow { color: var(--gray-300); font-size: 16px; font-weight: 700; }
+.vt-branch-line { color: var(--gray-300); font-size: 11px; }
+.version-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 12px;
+}
+.version-diff {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+.version-diff .diff-file { padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+.version-diff .diff-file .icon { font-size: 16px; }
+.version-diff .diff-change { color: var(--yellow); font-weight: 600; }
+
+/* ============================================================
+   Config
+   ============================================================ */
+.config-section {
+  margin-bottom: 20px;
+}
+.config-section h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.config-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+.config-row label {
+  width: 100px;
+  flex-shrink: 0;
+  color: var(--gray-600);
+  font-weight: 500;
+}
+.config-row .input, .config-row select { max-width: 300px; }
+.config-row .radio-group { display: flex; gap: 16px; }
+.config-row .radio-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; width: auto; }
+.config-row .checkbox-group { display: flex; flex-wrap: wrap; gap: 12px; }
+.config-row .checkbox-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; width: auto; font-size: 12px; }
+.config-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid var(--gray-200);
+}
+
+/* ============================================================
+   Tooltip & Misc
+   ============================================================ */
+.tooltip {
+  position: relative;
+  cursor: help;
+  border-bottom: 1px dashed var(--gray-400);
+}
+
+.highlight-num { color: var(--green); font-weight: 700; font-family: var(--font-mono); }
+.text-mono { font-family: var(--font-mono); }
+.text-sm { font-size: 11px; }
+.text-xs { font-size: 10px; }
+.text-gray { color: var(--gray-500); }
+.text-green { color: var(--green); }
+.text-yellow { color: var(--yellow); }
+.text-red { color: var(--red); }
+.text-blue { color: var(--primary); }
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-4 { margin-bottom: 16px; }
+.flex { display: flex; }
+.gap-2 { gap: 8px; }
+.gap-4 { gap: 16px; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .sidebar { width: 60px; }
+  .sidebar .nav-item span { display: none; }
+  .sidebar .nav-item { justify-content: center; padding: 10px; }
+  .editor-layout { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ====== Topbar ====== -->
+  <div class="topbar">
+    <div class="logo"><span class="icon">🧪</span>Research Auto-Pilot</div>
+    <div class="project-select" onclick="switchProject()">
+      📁 case-001 <span style="font-size:10px">▼</span>
+    </div>
+    <div class="spacer"></div>
+    <button class="ctrl-btn pause" title="暂停">⏸ 暂停</button>
+    <button class="ctrl-btn resume" title="继续">▶ 继续</button>
+    <button class="ctrl-btn stop" title="中止">⏹ 中止</button>
+    <div class="user-badge"><div class="avatar">U</div>user</div>
+  </div>
+
+  <!-- ====== Body ====== -->
+  <div class="body-wrap">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard', this)">
+        📊 概览
+      </div>
+      <div class="nav-item" data-page="workspace" onclick="navigateTo('workspace', this)">
+        📋 工作台
+      </div>
+      <div class="nav-item" data-page="hil" onclick="navigateTo('hil', this)">
+        🔴 HIL 审阅
+      </div>
+      <div class="nav-item" data-page="literature" onclick="navigateTo('literature', this)">
+        📚 文献
+      </div>
+      <div class="nav-item" data-page="experiment" onclick="navigateTo('experiment', this)">
+        🧪 实验
+      </div>
+      <div class="nav-item" data-page="editor" onclick="navigateTo('editor', this)">
+        📝 论文
+      </div>
+      <div class="nav-item" data-page="version" onclick="navigateTo('version', this)">
+        🗂 版本
+      </div>
+      <div class="nav-item" data-page="config" onclick="navigateTo('config', this)">
+        ⚙ 配置
+      </div>
+      <div class="nav-item" data-page="logs" onclick="navigateTo('logs', this)">
+        📜 日志
+      </div>
+      <div class="nav-divider"></div>
+      <div class="status-block">
+        <div><span class="status-dot running"></span>🟢 运行中</div>
+        <div class="version-tag">v3 当前</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main" id="main-content">
+
+      <!-- ==================== Dashboard ==================== -->
+      <div class="page active" id="page-dashboard">
+        <div class="dash-header">
+          <h2>Dashboard</h2>
+          <button class="btn btn-primary" onclick="alert('新建项目')">+ 新建项目</button>
+        </div>
+        <div class="dash-filters">
+          <input class="input" type="text" placeholder="🔍 搜索项目..." style="max-width:260px">
+          <select class="input" style="width:auto"><option>全部</option><option>运行中</option><option>HIL 待审</option><option>已完成</option></select>
+          <select class="input" style="width:auto"><option>运行中▾</option><option>全部</option><option>HIL 待审</option><option>已完成</option></select>
+          <select class="input" style="width:auto"><option>学科▾</option><option>NLP</option><option>材料</option><option>生物信息</option></select>
+        </div>
+
+        <div class="project-grid">
+          <div class="project-card" onclick="navigateTo('workspace')">
+            <div class="pc-header">
+              <span class="pc-name">case-001</span>
+              <span class="badge green">🟢 运行中</span>
+            </div>
+            <div class="pc-domain">NLP / Mamba对比</div>
+            <div class="pc-node">当前节点: EVALUATE</div>
+            <div class="pc-meta"><span>v3</span><span>进度 60%</span><span>更新: 2分钟前</span></div>
+            <div class="pc-progress"><div class="progress-bar"><div class="fill blue" style="width:60%"></div></div></div>
+            <div class="pc-actions">
+              <button class="btn btn-primary btn-sm">打开</button>
+              <button class="btn btn-outline btn-sm">继续</button>
+            </div>
+          </div>
+
+          <div class="project-card" onclick="navigateTo('hil')">
+            <div class="pc-header">
+              <span class="pc-name">case-002</span>
+              <span class="badge yellow">🟡 HIL 待审</span>
+            </div>
+            <div class="pc-domain">材料 / 钙钛矿</div>
+            <div class="pc-node">等待: HIL-DESIGN</div>
+            <div class="pc-meta"><span>v1</span><span>进度 25%</span><span>更新: 1小时前</span></div>
+            <div class="pc-progress"><div class="progress-bar"><div class="fill blue" style="width:25%"></div></div></div>
+            <div class="pc-actions">
+              <button class="btn btn-primary btn-sm">打开</button>
+              <button class="btn btn-yellow btn-sm">审阅</button>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="pc-header">
+              <span class="pc-name">case-003</span>
+              <span class="badge gray">⚪ 已完成</span>
+            </div>
+            <div class="pc-domain">生物 / GEO差异</div>
+            <div class="pc-node">已投稿</div>
+            <div class="pc-meta"><span>v5</span><span>进度 100%</span><span>更新: 昨天</span></div>
+            <div class="pc-progress"><div class="progress-bar"><div class="fill green" style="width:100%"></div></div></div>
+            <div class="pc-actions">
+              <button class="btn btn-outline btn-sm">打开</button>
+              <button class="btn btn-outline btn-sm">归档</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-summary">
+          <div class="sum-item"><div class="num">12</div><div class="label">7日活跃项目</div></div>
+          <div class="sum-item"><div class="num">4.2M</div><div class="label">总 Token</div></div>
+          <div class="sum-item"><div class="num">¥385</div><div class="label">总成本</div></div>
+        </div>
+      </div>
+
+      <!-- ==================== Project Workspace ==================== -->
+      <div class="page" id="page-workspace">
+        <div class="ws-header">
+          <h2>case-001 / Mamba vs Transformer 长文本对比</h2>
+          <div class="subtitle">状态机可视化 · Agent 实时监控 · 产物追踪</div>
+        </div>
+
+        <!-- State Machine -->
+        <div class="state-machine">
+          <div class="sm-title">📊 状态机进度</div>
+          <div class="sm-nodes" id="state-machine-nodes"></div>
+        </div>
+
+        <div class="ws-grid">
+          <!-- Agent Status -->
+          <div class="card agent-status">
+            <div class="card-header">🤖 当前 Agent: EVALUATE</div>
+            <div class="as-metrics">
+              <div class="as-metric"><div class="val">2m 18s</div><div class="lbl">已运行</div></div>
+              <div class="as-metric"><div class="val">20.6K</div><div class="lbl">Token 总用量</div></div>
+              <div class="as-metric"><div class="val">12.4K</div><div class="lbl">强模型 Token</div></div>
+              <div class="as-metric"><div class="val">8.2K</div><div class="lbl">廉模型 Token</div></div>
+            </div>
+            <div style="margin-bottom:8px;font-size:12px;"><span class="text-gray">成本:</span> <span class="text-mono">¥0.18</span></div>
+            <div class="as-actions">
+              <button class="btn btn-outline btn-sm">📋 查看日志</button>
+              <button class="btn btn-red btn-sm">⏹ 中断</button>
+              <button class="btn btn-yellow btn-sm">⏸ 暂停</button>
+            </div>
+          </div>
+
+          <!-- Recent Artifacts -->
+          <div class="card">
+            <div class="card-header">📦 最近产物 <span style="font-weight:400;font-size:11px;margin-left:auto;color:var(--primary);cursor:pointer">全部产物 →</span></div>
+            <div class="artifact-item"><span class="art-name">✅ metrics.csv</span><span class="art-meta">2 KB · 1分钟前</span></div>
+            <div class="artifact-item"><span class="art-name">✅ stats.md</span><span class="art-meta">4 KB · 1分钟前</span></div>
+            <div class="artifact-item"><span class="art-name">🔄 figs_draft/</span><span class="art-meta" style="color:var(--primary)">生成中...</span></div>
+            <div class="artifact-item"><span class="art-name">✅ variables.yaml</span><span class="art-meta">1 KB · 12分钟前</span></div>
+            <div class="artifact-item"><span class="art-name">✅ run.py</span><span class="art-meta">5 KB · 15分钟前</span></div>
+          </div>
+        </div>
+
+        <!-- Real-time Log -->
+        <div class="card">
+          <div class="card-header">📋 实时日志（最后 20 行）<span style="font-weight:400;font-size:11px;margin-left:auto;color:var(--gray-400)">自动滚动</span></div>
+          <div class="log-stream" id="log-stream">
+            <div class="log-line"><span class="log-time">14:23:01</span><span class="log-tag">[EVAL]</span> loading raw/ from 03_experiment/</div>
+            <div class="log-line"><span class="log-time">14:23:03</span><span class="log-tag">[EVAL]</span> computing metrics: accuracy, f1, latency</div>
+            <div class="log-line"><span class="log-time">14:23:15</span><span class="log-tag">[EVAL]</span> running paired t-test (n=10)</div>
+            <div class="log-line"><span class="log-time">14:23:42</span><span class="log-tag">[EVAL]</span> p=0.003, effect_size=0.82</div>
+            <div class="log-line"><span class="log-time">14:23:50</span><span class="log-tag">[EVAL]</span> generating boxplot → figs_draft/boxplot.pdf</div>
+            <div class="log-line"><span class="log-time">14:24:01</span><span class="log-tag">[EVAL]</span> writing stats.md ...</div>
+            <div class="log-line"><span class="log-time">14:24:08</span><span class="log-tag">[EVAL]</span> <span class="log-check">✅ done, artifacts: a6, a7</span></div>
+            <div class="log-line"><span class="log-time">14:24:10</span><span class="log-tag">[ORCH]</span> entering HIL_RESULT, awaiting user decision</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== HIL Review ==================== -->
+      <div class="page" id="page-hil">
+        <div class="hil-header">🔴 HIL-3: 结果评价审阅 — case-001</div>
+        <div style="font-size:13px;color:var(--gray-600);margin-bottom:8px;">⚠️ 系统已暂停，等待你的决策</div>
+
+        <div class="hil-tabs">
+          <div class="hil-tab active" onclick="switchHilTab(this, 'tab-metrics')">📊 metrics.csv</div>
+          <div class="hil-tab" onclick="switchHilTab(this, 'tab-stats')">📋 stats.md</div>
+          <div class="hil-tab" onclick="switchHilTab(this, 'tab-charts')">📈 图表</div>
+          <div class="hil-tab" onclick="switchHilTab(this, 'tab-code')">💻 实验代码</div>
+        </div>
+
+        <div class="hil-content" id="hil-content">
+          <!-- Default: metrics table -->
+          <table>
+            <thead><tr><th>method</th><th>accuracy</th><th>f1</th><th>latency_ms</th><th>params</th></tr></thead>
+            <tbody>
+              <tr><td>Transformer</td><td>0.823</td><td>0.819</td><td>45.2</td><td>110M</td></tr>
+              <tr style="background:#f0fdf4"><td>Mamba</td><td><strong>0.847</strong></td><td><strong>0.843</strong></td><td><strong>28.6</strong></td><td><strong>95M</strong> ← best</td></tr>
+              <tr><td>Mamba-small</td><td>0.812</td><td>0.808</td><td>18.3</td><td>45M</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:12px;font-size:12px;color:var(--gray-600);">
+            <strong>Paired t-test (Transformer vs Mamba):</strong><br>
+            t = -4.21, p = <span class="text-green">0.003</span>, Cohen's d = 0.82 (large effect)<br>
+            95% CI: [0.018, 0.036]
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <span class="badge blue">📊 boxplot.pdf</span>
+            <span class="badge blue">📊 roc.pdf</span>
+            <span class="badge blue">📊 confusion.pdf</span>
+          </div>
+        </div>
+
+        <div class="hil-note">
+          💬 <strong>Agent 备注：</strong>Mamba 在长文本上显著优于 Transformer (p&lt;0.01)，效应量大。建议进入讨论阶段。是否还需要补充消融实验？
+        </div>
+
+        <div class="hil-comment">
+          <label style="font-size:12px;color:var(--gray-500);margin-bottom:4px;display:block;">你的评论（可选）：</label>
+          <textarea placeholder="输入你的评论或修改建议..."></textarea>
+        </div>
+
+        <div class="hil-actions">
+          <button class="btn btn-green" onclick="alert('已确认，继续讨论')">✅ 确认，继续讨论</button>
+          <button class="btn btn-yellow" onclick="alert('进入修改模式')">✏️ 修改方案重跑</button>
+          <button class="btn btn-outline" onclick="alert('回退到实验设计')">⏪ 回退到实验设计</button>
+          <button class="btn btn-red" onclick="alert('已中止')">🛑 中止</button>
+        </div>
+      </div>
+
+      <!-- ==================== Literature ==================== -->
+      <div class="page" id="page-literature">
+        <div class="card-header" style="font-size:16px;">📚 文献库 — case-001 <span style="font-weight:400;font-size:12px;color:var(--gray-500);margin-left:8px;">共 87 篇 | 1.2K 段落</span></div>
+
+        <div class="flex gap-2 mb-4 items-center">
+          <input class="input" type="text" placeholder="🔍 语义检索..." style="max-width:300px">
+          <select class="input" style="width:auto"><option>筛选▾</option></select>
+          <select class="input" style="width:auto"><option>年份▾</option></select>
+          <select class="input" style="width:auto"><option>学科▾</option></select>
+        </div>
+
+        <div class="lit-layout">
+          <!-- Literature List -->
+          <div class="card lit-list" style="padding:0;">
+            <div class="lit-item selected" onclick="selectLit(this)">
+              <div class="lit-title">★ Mamba: Linear-Time Sequence Modeling...</div>
+              <div class="lit-authors">Gu & Dao 2024</div>
+              <div class="lit-meta">arXiv:2312.00752 · 引用 423</div>
+              <div class="lit-tags"><span class="badge blue">NLP</span><span class="badge blue">SSM</span></div>
+            </div>
+            <div class="lit-item" onclick="selectLit(this)">
+              <div class="lit-title">Attention Is All You Need</div>
+              <div class="lit-authors">Vaswani et al. 2017</div>
+              <div class="lit-meta">arXiv:1706.03762 · 引用 95K</div>
+              <div class="lit-tags"><span class="badge blue">NLP</span><span class="badge blue">Transformer</span></div>
+            </div>
+            <div class="lit-item" onclick="selectLit(this)">
+              <div class="lit-title">Efficiently Modeling Long Sequences...</div>
+              <div class="lit-authors">Dao et al. 2022</div>
+              <div class="lit-meta">NeurIPS 2022 · 引用 2.1K</div>
+              <div class="lit-tags"><span class="badge blue">NLP</span><span class="badge blue">Efficiency</span></div>
+            </div>
+            <div class="lit-item" onclick="selectLit(this)">
+              <div class="lit-title">Hungry Hungry Hippos: Towards LM with SSM</div>
+              <div class="lit-authors">Fu et al. 2023</div>
+              <div class="lit-meta">ICLR 2023 · 引用 567</div>
+              <div class="lit-tags"><span class="badge blue">NLP</span><span class="badge blue">SSM</span></div>
+            </div>
+            <div style="padding:10px;text-align:center;color:var(--primary);cursor:pointer;font-size:12px;">+ 添加文献</div>
+          </div>
+
+          <!-- Detail Panel -->
+          <div class="card lit-detail">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:4px;">Mamba: Linear-Time Sequence Modeling with Selective State Spaces</h3>
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">
+              Gu A, Dao T. arXiv:2312.00752, 2024.
+              <span style="margin-left:12px;">📄 PDF</span>
+              <span style="margin-left:12px;">🌐 arXiv</span>
+              <span style="margin-left:12px;">📊 引用 423</span>
+            </div>
+            <div class="detail-section">
+              <h4>摘要</h4>
+              <div class="detail-abstract">
+                We introduce Mamba, a new state space model architecture that achieves linear-time sequence modeling through a novel selective scan mechanism. Unlike Transformers with quadratic attention complexity, Mamba maintains computational efficiency while matching or exceeding Transformer performance across multiple benchmarks including language modeling, audio processing, and genomics.
+              </div>
+            </div>
+            <div class="detail-section">
+              <h4>📑 章节切片（已嵌入向量库）</h4>
+              <ul class="detail-chapters" style="list-style:none;padding:0;">
+                <li>• Abstract</li>
+                <li>• 1. Introduction</li>
+                <li>• 2. State Space Models</li>
+                <li>• 3. Selective SSM</li>
+                <li>• 4. Experiments</li>
+                <li>• 5. Discussion</li>
+              </ul>
+            </div>
+            <div class="detail-actions">
+              <button class="btn btn-outline btn-sm">在综述中使用</button>
+              <button class="btn btn-outline btn-sm">在讨论中引用</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review Preview -->
+        <div class="lit-preview mt-4">
+          <strong style="color:var(--gray-800)">📝 review.md 预览：</strong><br><br>
+          <span style="font-weight:700"># 综述：Mamba vs Transformer 长文本对比</span><br><br>
+          Transformer <span class="cite-highlight">[Vaswani 2017]</span> 自注意力机制 O(n²) 复杂度限制了...<br>
+          Mamba <span class="cite-highlight">[Gu & Dao 2024]</span> 提出选择性状态空间模型，实现线性复杂度...
+        </div>
+      </div>
+
+      <!-- ==================== Experiment Monitor ==================== -->
+      <div class="page" id="page-experiment">
+        <div class="card-header" style="font-size:16px;">🧪 实验监控 — case-001 / v3</div>
+
+        <div class="exp-grid">
+          <!-- Run Control -->
+          <div class="card">
+            <div class="card-header">运行控制</div>
+            <div style="margin-bottom:8px;"><span class="badge green">🟢 运行中</span></div>
+            <div style="font-size:13px;margin-bottom:4px;">已运行: <strong>12分45秒</strong></div>
+            <div style="font-size:13px;margin-bottom:12px;">进度: <strong>3/5</strong> 实验配置</div>
+            <div class="progress-bar mb-4"><div class="fill blue" style="width:60%"></div></div>
+            <div class="flex gap-2">
+              <button class="btn btn-yellow btn-sm">⏸ 暂停</button>
+              <button class="btn btn-red btn-sm">⏹ 停止</button>
+            </div>
+          </div>
+
+          <!-- Resource Monitor -->
+          <div class="card">
+            <div class="card-header">资源监控</div>
+            <div class="resource-bar">
+              <div class="rb-label"><span>CPU</span><span>68% · 16核</span></div>
+              <div class="rb-track"><div class="rb-fill cpu" style="width:68%"></div></div>
+            </div>
+            <div class="resource-bar">
+              <div class="rb-label"><span>内存</span><span>52% · 24GB</span></div>
+              <div class="rb-track"><div class="rb-fill mem" style="width:52%"></div></div>
+            </div>
+            <div class="resource-bar">
+              <div class="rb-label"><span>GPU</span><span>92% · RTX 4090</span></div>
+              <div class="rb-track"><div class="rb-fill gpu" style="width:92%"></div></div>
+            </div>
+            <div class="resource-bar">
+              <div class="rb-label"><span>磁盘</span><span>18% · 4.2GB used</span></div>
+              <div class="rb-track"><div class="rb-fill disk" style="width:18%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Experiment Config List -->
+        <div class="card mb-4">
+          <div class="card-header">实验配置列表</div>
+          <table>
+            <thead><tr><th>#</th><th>name</th><th>status</th><th>duration</th><th>result</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>baseline-trans</td><td><span class="badge green">✅ done</span></td><td>2m 12s</td><td>acc=0.823</td></tr>
+              <tr><td>2</td><td>baseline-mamba</td><td><span class="badge green">✅ done</span></td><td>1m 48s</td><td>acc=0.847</td></tr>
+              <tr style="background:#f0fdf4"><td>3</td><td>mamba-small</td><td><span class="badge blue">🟢 run</span></td><td>0m 35s</td><td>-</td></tr>
+              <tr><td>4</td><td>mamba-ablation</td><td><span class="badge gray">⏳ pending</span></td><td>-</td><td>-</td></tr>
+              <tr><td>5</td><td>transformer-long</td><td><span class="badge gray">⏳ pending</span></td><td>-</td><td>-</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Real-time Log -->
+        <div class="card">
+          <div class="card-header">实时日志</div>
+          <div class="log-stream">
+            <div class="log-line"><span class="log-time">14:23:01</span> [run.py] INFO loading dataset longbench...</div>
+            <div class="log-line"><span class="log-time">14:23:15</span> [run.py] INFO model=mamba-small, batch=32</div>
+            <div class="log-line"><span class="log-time">14:23:42</span> [run.py] INFO eval pass 1/5, acc=0.781</div>
+            <div class="log-line"><span class="log-time">14:24:01</span> [run.py] INFO eval pass 2/5, acc=0.795</div>
+            <div class="log-line"><span class="log-time">14:24:20</span> [run.py] INFO eval pass 3/5, acc=0.790</div>
+          </div>
+        </div>
+        <div class="flex gap-2 mt-2">
+          <button class="btn btn-outline btn-sm">💻 查看代码 run.py</button>
+          <button class="btn btn-outline btn-sm">📥 下载 raw 数据</button>
+          <button class="btn btn-outline btn-sm">📋 查看完整日志</button>
+        </div>
+      </div>
+
+      <!-- ==================== Paper Editor ==================== -->
+      <div class="page" id="page-editor">
+        <div class="flex justify-between items-center mb-2">
+          <div class="card-header" style="font-size:16px;margin:0;">📝 论文编辑器 — case-001</div>
+          <div class="flex gap-2">
+            <select class="input" style="width:auto"><option>语言: 中文 ▾</option><option>English</option></select>
+            <select class="input" style="width:auto"><option>模板: CTeX ▾</option><option>IEEE</option><option>ACM</option></select>
+          </div>
+        </div>
+
+        <div class="editor-layout">
+          <!-- File Tree -->
+          <div class="editor-filetree">
+            <div class="ft-folder">📂 06_paper/</div>
+            <div class="ft-file"> main.tex</div>
+            <div class="ft-folder" style="margin-top:4px;">📂 sections/</div>
+            <div class="ft-file"> abstract.tex</div>
+            <div class="ft-file"> intro.tex</div>
+            <div class="ft-file"> related.tex</div>
+            <div class="ft-file"> method.tex</div>
+            <div class="ft-file active"> exp.tex ◀</div>
+            <div class="ft-file"> discussion.tex</div>
+            <div class="ft-file"> conclusion.tex</div>
+            <div class="ft-folder" style="margin-top:4px;">📂 figures/</div>
+            <div class="ft-file"> boxplot.pdf</div>
+            <div class="ft-file"> roc.pdf</div>
+            <div class="ft-file" style="margin-top:8px;color:var(--primary);cursor:pointer;">+ 新章节</div>
+          </div>
+
+          <!-- LaTeX Editor -->
+          <div class="editor-code">
+            <span class="cmd">\section</span><span class="arg">{实验结果}</span><br>
+            <span class="cmd">\label</span><span class="arg">{sec:exp}</span><br>
+            <br>
+            我们在 LongBench 上对比了 Mamba 与 Transformer 的性能（表<span class="cmd">~\ref</span><span class="arg">{tab:1}</span>）。<br>
+            <br>
+            <span class="cmd">\begin</span><span class="arg">{table}</span><br>
+            &nbsp;&nbsp;<span class="cmd">\centering</span><br>
+            &nbsp;&nbsp;<span class="cmd">\begin</span><span class="arg">{tabular}{lcc}</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;方法 & 准确率 & 延迟 <span class="cmd">\\</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Transformer & 0.823 & 45.2ms <span class="cmd">\\</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Mamba & 0.847 & 28.6ms <span class="cmd">\\</span><br>
+            &nbsp;&nbsp;<span class="cmd">\end</span><span class="arg">{tabular}</span><br>
+            <span class="cmd">\end</span><span class="arg">{table}</span>
+          </div>
+
+          <!-- PDF Preview -->
+          <div class="editor-preview">
+            <div class="pdf-title">📄 main.pdf 预览</div>
+            <div class="pdf-section">4. 实验结果</div>
+            <div class="pdf-text">
+              我们在 LongBench 上对比了 Mamba 与 Transformer 的性能（表 1）。
+            </div>
+            <table class="pdf-table">
+              <thead><tr><th>方法</th><th>准确率</th><th>延迟</th></tr></thead>
+              <tbody>
+                <tr><td>Transformer</td><td>0.823</td><td>45.2ms</td></tr>
+                <tr><td>Mamba</td><td>0.847</td><td>28.6ms</td></tr>
+              </tbody>
+            </table>
+            <div style="font-size:10px;color:var(--gray-400);text-align:center;margin:4px 0;">表 1: 性能对比</div>
+            <div class="pdf-figure">[图 1: boxplot.pdf]</div>
+          </div>
+        </div>
+
+        <div class="editor-actions">
+          <button class="btn btn-outline btn-sm">💡 AI 续写</button>
+          <button class="btn btn-outline btn-sm">🔍 查文献</button>
+          <button class="btn btn-outline btn-sm">⬇ 下载 PDF</button>
+          <button class="btn btn-primary btn-sm">编译</button>
+        </div>
+      </div>
+
+      <!-- ==================== Version Management ==================== -->
+      <div class="page" id="page-version">
+        <div class="card-header" style="font-size:16px;">🗂 版本管理 — case-001</div>
+
+        <!-- Version Tree -->
+        <div class="version-tree">
+          <div class="vt-node" onclick="alert('切换到 v1')">v1<br><span class="text-xs text-gray">baseline</span></div>
+          <div class="vt-arrow">→</div>
+          <div class="vt-node" onclick="alert('切换到 v2')">v2<br><span class="text-xs text-gray">add-ablation</span></div>
+          <div class="vt-arrow">→</div>
+          <div class="vt-node current">🟢 v3<br><span class="text-xs text-gray">current</span></div>
+          <div class="vt-branch-line" style="margin-left:12px;">└─ v1.1 alt-metrics (已归档)</div>
+        </div>
+
+        <div class="version-layout">
+          <!-- Version List -->
+          <div class="card" style="padding:12px;">
+            <div style="padding:8px;border-left:3px solid var(--primary);background:var(--primary-bg);margin-bottom:8px;border-radius:0 var(--radius) var(--radius) 0;cursor:pointer;">
+              <div style="font-weight:600;">🟢 v3 current</div>
+              <div class="text-xs text-gray">2小时前 · parent: v2 · artifacts: 5</div>
+            </div>
+            <div style="padding:8px;border-left:3px solid transparent;margin-bottom:8px;cursor:pointer;" onclick="alert('切换到 v2')">
+              <div>v2 add-ablation</div>
+              <div class="text-xs text-gray">昨天 · parent: v1 · artifacts: 5</div>
+            </div>
+            <div style="padding:8px;border-left:3px solid transparent;cursor:pointer;" onclick="alert('切换到 v1')">
+              <div>v1 baseline</div>
+              <div class="text-xs text-gray">3天前 · parent: - · artifacts: 5</div>
+            </div>
+            <div style="padding:10px;text-align:center;color:var(--primary);cursor:pointer;font-size:12px;margin-top:8px;">+ 新建版本分支</div>
+          </div>
+
+          <!-- Diff View -->
+          <div class="card">
+            <div class="card-header">v3 vs v2 diff</div>
+            <div class="version-diff">
+              <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">变更文件:</div>
+              <div class="diff-file"><span class="icon">📝</span> 04_results/metrics.csv <span class="diff-change">改</span></div>
+              <div class="diff-file"><span class="icon">📝</span> 04_results/stats.md <span class="diff-change">改</span></div>
+              <div class="diff-file"><span class="icon">📊</span> 04_results/boxplot.pdf <span class="diff-change">改</span></div>
+              <div class="diff-file"><span class="icon">📝</span> 05_discussion.md <span class="diff-change">改</span></div>
+              <div style="margin-top:12px;font-size:12px;color:var(--gray-500);">metrics 对比:</div>
+              <div style="font-size:12px;margin-top:4px;">
+                Mamba acc: 0.832 → <span class="text-green">0.847 (+0.015)</span><br>
+                p-value: 0.012 → <span class="text-green">0.003</span>
+              </div>
+            </div>
+            <div class="flex gap-2 mt-4">
+              <button class="btn btn-primary btn-sm">切到此版本</button>
+              <button class="btn btn-outline btn-sm">diff v3 v1</button>
+              <button class="btn btn-outline btn-sm">导出</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Config ==================== -->
+      <div class="page" id="page-config">
+        <div class="card-header" style="font-size:16px;">⚙ 配置 — case-001</div>
+
+        <div class="card mt-4">
+          <div class="config-section">
+            <h3>▸ 项目基本信息</h3>
+            <div class="config-row"><label>名称:</label><input class="input" value="case-001" style="max-width:300px"></div>
+            <div class="config-row"><label>学科:</label><select class="input" style="max-width:300px"><option>NLP</option><option>材料</option><option>生物信息</option></select></div>
+            <div class="config-row"><label>语言:</label><select class="input" style="max-width:300px"><option>中文（CTeX）</option><option>English (IEEE)</option></select></div>
+          </div>
+
+          <div class="config-section">
+            <h3>▸ LLM 配置</h3>
+            <div class="config-row">
+              <label>模式:</label>
+              <div class="radio-group">
+                <label><input type="radio" name="mode"> API</label>
+                <label><input type="radio" name="mode"> 本地</label>
+                <label><input type="radio" name="mode" checked> Hybrid <span class="badge blue">推荐</span></label>
+              </div>
+            </div>
+            <div class="config-row"><label>强模型:</label><select class="input" style="max-width:300px"><option>deepseek-reasoner</option><option>glm-4.5</option><option>qwen-max</option></select><span class="text-xs text-gray" style="margin-left:8px;">¥4/¥16 per M token</span></div>
+            <div class="config-row"><label>廉模型:</label><select class="input" style="max-width:300px"><option>deepseek-chat</option><option>glm-4-flash</option><option>qwen-turbo</option></select><span class="text-xs text-gray" style="margin-left:8px;">¥2/¥8 per M token</span></div>
+            <div class="config-row"><label>长文:</label><select class="input" style="max-width:300px"><option>moonshot-v1-200k</option><option>glm-4-long</option></select></div>
+            <div class="config-row"><label>嵌入:</label><select class="input" style="max-width:300px"><option>bge-m3 (本地)</option><option>qwen-embedding</option></select></div>
+            <div class="config-row"><label>本地模型:</label><select class="input" style="max-width:300px"><option>qwen2.5-14b</option></select><span class="text-xs text-gray" style="margin-left:8px;">仅 mode=local/hybrid 显示</span></div>
+          </div>
+
+          <div class="config-section">
+            <h3>▸ RAG 配置</h3>
+            <div class="config-row"><label>模式:</label><select class="input" style="max-width:300px"><option>online</option><option>web_only</option><option>offline</option></select></div>
+            <div class="config-row"><label>全局库复用:</label><label class="checkbox-group"><input type="checkbox" checked> 启用跨项目共享</label></div>
+            <div class="config-row">
+              <label>数据源:</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" checked> arXiv</label>
+                <label><input type="checkbox" checked> Semantic Scholar</label>
+                <label><input type="checkbox" checked> OpenAlex</label>
+                <label><input type="checkbox" checked> PubMed</label>
+                <label><input type="checkbox"> DBLP</label>
+                <label><input type="checkbox"> Papers with Code</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h3>▸ HIL 配置</h3>
+            <div class="config-row"><label></label><label class="checkbox-group"><input type="checkbox" checked> 启用 Human-in-the-loop</label></div>
+            <div class="config-row">
+              <label>中断点:</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" checked> 综述审阅</label>
+                <label><input type="checkbox" checked> 实验方案</label>
+                <label><input type="checkbox" checked> 结果评价</label>
+                <label><input type="checkbox" checked> 终稿</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h3>▸ 版本管理</h3>
+            <div class="config-row"><label></label><label class="checkbox-group"><input type="checkbox" checked> 启用版本快照</label></div>
+            <div class="config-row">
+              <label>策略:</label>
+              <div class="radio-group">
+                <label><input type="radio" name="vstrat" checked> snapshot</label>
+                <label><input type="radio" name="vstrat"> git</label>
+              </div>
+            </div>
+            <div class="config-row"><label>保留最近:</label><select class="input" style="max-width:200px"><option>5 个版本</option><option>10 个版本</option><option>全部</option></select></div>
+          </div>
+
+          <div class="config-section">
+            <h3>▸ 运行时</h3>
+            <div class="config-row"><label>环境:</label><select class="input" style="max-width:300px"><option>local</option><option>cloud</option></select></div>
+            <div class="config-row"><label>沙箱:</label><select class="input" style="max-width:300px"><option>docker</option><option>conda</option><option>none</option></select></div>
+          </div>
+
+          <div class="config-actions">
+            <button class="btn btn-primary">保存</button>
+            <button class="btn btn-outline">重置</button>
+            <button class="btn btn-outline">导出 config.yaml</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Logs ==================== -->
+      <div class="page" id="page-logs">
+        <div class="card-header" style="font-size:16px;">📜 日志与溯源 — case-001</div>
+        <div class="card">
+          <div class="log-stream" style="max-height:500px;">
+            <div class="log-line"><span class="log-time">14:00:01</span> <span class="log-tag">[INIT]</span> ▶ 项目启动，加载 config.yaml</div>
+            <div class="log-line"><span class="log-time">14:00:03</span> <span class="log-tag">[LIT]</span> ▶ 调用 arXiv/S2/OpenAlex，关键词扩展中...</div>
+            <div class="log-line"><span class="log-time">14:00:15</span> <span class="log-tag">[LIT]</span> 找到 184 篇候选 → 去重后 87 篇 → 入库 1.2K 段</div>
+            <div class="log-line"><span class="log-time">14:02:48</span> <span class="log-tag">[LIT]</span> <span class="log-check">✅ review.md 生成（2.3K 字，引用 23 篇）</span></div>
+            <div class="log-line"><span class="log-time">14:02:48</span> <span class="log-tag">[HIL-1]</span> ⏸ 综述审阅 → 用户确认</div>
+            <div class="log-line"><span class="log-time">14:03:02</span> <span class="log-tag">[DESIGN]</span> ▶ 生成假设与实验方案...</div>
+            <div class="log-line"><span class="log-time">14:04:30</span> <span class="log-tag">[DESIGN]</span> <span class="log-check">✅ protocol.md + variables.yaml</span></div>
+            <div class="log-line"><span class="log-time">14:04:30</span> <span class="log-tag">[HIL-2]</span> ⏸ 实验方案审阅 → 用户确认</div>
+            <div class="log-line"><span class="log-time">14:05:10</span> <span class="log-tag">[EXP]</span> ▶ 生成 run.py + dry-run</div>
+            <div class="log-line"><span class="log-time">14:05:42</span> <span class="log-tag">[EXP]</span> dry-run ✅ → 全量运行（5 个配置）</div>
+            <div class="log-line"><span class="log-time">14:18:25</span> <span class="log-tag">[EXP]</span> <span class="log-check">✅ raw/ + logs/ 落盘</span></div>
+            <div class="log-line"><span class="log-time">14:18:30</span> <span class="log-tag">[EVAL]</span> ▶ 计算 metrics + 显著性检验</div>
+            <div class="log-line"><span class="log-time">14:23:08</span> <span class="log-tag">[EVAL]</span> <span class="log-check">✅ metrics.csv + stats.md + 3 张图</span></div>
+            <div class="log-line"><span class="log-time">14:23:10</span> <span class="log-tag">[HIL-3]</span> ⏸ 结果评价审阅 — 等待用户决策...</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /body-wrap -->
+</div><!-- /app -->
+
+<script>
+// ============================================================
+// Navigation
+// ============================================================
+function navigateTo(pageName, navEl) {
+  // Update sidebar
+  document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+  if (navEl) {
+    navEl.classList.add('active');
+  } else {
+    // Find by data-page
+    const target = document.querySelector(`.sidebar .nav-item[data-page="${pageName}"]`);
+    if (target) target.classList.add('active');
+  }
+
+  // Show page
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('page-' + pageName);
+  if (page) page.classList.add('active');
+
+  // Special handling for workspace
+  if (pageName === 'workspace') renderStateMachine();
+}
+
+// ============================================================
+// State Machine Renderer
+// ============================================================
+function renderStateMachine() {
+  const container = document.getElementById('state-machine-nodes');
+  if (!container) return;
+
+  const nodes = [
+    { name: 'INIT', status: 'done', isHil: false },
+    { name: 'LITERATURE', status: 'done', isHil: false },
+    { name: 'HIL_REVIEW', status: 'hil-done', isHil: true },
+    { name: 'DESIGN', status: 'done', isHil: false },
+    { name: 'HIL_DESIGN', status: 'hil-done', isHil: true },
+    { name: 'EXPERIMENT', status: 'done', isHil: false },
+    { name: 'EVALUATE', status: 'current', isHil: false },
+    { name: 'HIL_RESULT', status: 'hil-current', isHil: true },
+    { name: 'DISCUSS', status: 'pending', isHil: false },
+    { name: 'WRITE', status: 'pending', isHil: false },
+    { name: 'FIGURE', status: 'pending', isHil: false },
+    { name: 'COMPILE', status: 'pending', isHil: false },
+    { name: 'HIL_FINAL', status: 'pending', isHil: true },
+    { name: 'SUBMIT', status: 'pending', isHil: false },
+  ];
+
+  const iconMap = {
+    done: '✅',
+    current: '🔄',
+    pending: '⏳',
+    'hil-done': '👁',
+    'hil-current': '🔴',
+  };
+
+  container.innerHTML = nodes.map((n, i) => {
+    const icon = iconMap[n.status] || '⏳';
+    const hilClass = n.isHil ? 'hil' : '';
+    const statusClass = n.isHil ? (n.status === 'hil-current' ? 'hil-current' : 'hil-done') : n.status;
+    return `
+      <div class="sm-node">
+        <div class="sm-icon ${statusClass}">${icon}</div>
+        <div class="sm-name">${n.name}</div>
+      </div>
+      ${i < nodes.length - 1 ? '<div class="sm-arrow">→</div>' : ''}
+    `;
+  }).join('');
+}
+
+// ============================================================
+// HIL Tab Switching
+// ============================================================
+function switchHilTab(tabEl, tabId) {
+  document.querySelectorAll('.hil-tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+
+  const content = document.getElementById('hil-content');
+  const tabContents = {
+    'tab-metrics': `
+      <table>
+        <thead><tr><th>method</th><th>accuracy</th><th>f1</th><th>latency_ms</th><th>params</th></tr></thead>
+        <tbody>
+          <tr><td>Transformer</td><td>0.823</td><td>0.819</td><td>45.2</td><td>110M</td></tr>
+          <tr style="background:#f0fdf4"><td>Mamba</td><td><strong>0.847</strong></td><td><strong>0.843</strong></td><td><strong>28.6</strong></td><td><strong>95M</strong> ← best</td></tr>
+          <tr><td>Mamba-small</td><td>0.812</td><td>0.808</td><td>18.3</td><td>45M</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;font-size:12px;color:var(--gray-600);">
+        <strong>Paired t-test (Transformer vs Mamba):</strong><br>
+        t = -4.21, p = <span class="text-green">0.003</span>, Cohen's d = 0.82 (large effect)<br>
+        95% CI: [0.018, 0.036]
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;">
+        <span class="badge blue">📊 boxplot.pdf</span>
+        <span class="badge blue">📊 roc.pdf</span>
+        <span class="badge blue">📊 confusion.pdf</span>
+      </div>`,
+    'tab-stats': `
+      <div style="font-family:var(--font-mono);font-size:12px;line-height:1.8;color:var(--gray-700);">
+        <strong># Statistical Analysis Report</strong><br><br>
+        <strong>## 1. Descriptive Statistics</strong><br>
+        | Method | Mean Acc | Std | N |<br>
+        | Transformer | 0.823 | 0.012 | 10 |<br>
+        | Mamba | 0.847 | 0.009 | 10 |<br>
+        | Mamba-small | 0.812 | 0.015 | 10 |<br><br>
+        <strong>## 2. Paired t-test (Transformer vs Mamba)</strong><br>
+        - t-statistic: -4.21<br>
+        - p-value: <span style="color:#22c55e;">0.003</span> (significant at α=0.01)<br>
+        - Cohen's d: 0.82 (large effect size)<br>
+        - 95% CI: [0.018, 0.036]<br><br>
+        <strong>## 3. Conclusion</strong><br>
+        Mamba significantly outperforms Transformer on long-text benchmarks (p&lt;0.01).
+      </div>`,
+    'tab-charts': `
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <div style="border:2px dashed var(--gray-300);border-radius:var(--radius);padding:30px;text-align:center;flex:1;min-width:150px;">
+          📊<br><span style="font-size:11px;color:var(--gray-400);">boxplot.pdf</span>
+        </div>
+        <div style="border:2px dashed var(--gray-300);border-radius:var(--radius);padding:30px;text-align:center;flex:1;min-width:150px;">
+          📈<br><span style="font-size:11px;color:var(--gray-400);">roc.pdf</span>
+        </div>
+        <div style="border:2px dashed var(--gray-300);border-radius:var(--radius);padding:30px;text-align:center;flex:1;min-width:150px;">
+          🔢<br><span style="font-size:11px;color:var(--gray-400);">confusion.pdf</span>
+        </div>
+      </div>`,
+    'tab-code': `
+      <div style="font-family:var(--font-mono);font-size:12px;background:#1e293b;color:#e2e8f0;padding:16px;border-radius:var(--radius);line-height:1.8;">
+        <span style="color:#c084fc;">import</span> numpy <span style="color:#c084fc;">as</span> np<br>
+        <span style="color:#c084fc;">import</span> pandas <span style="color:#c084fc;">as</span> pd<br>
+        <span style="color:#c084fc;">from</span> scipy <span style="color:#c084fc;">import</span> stats<br>
+        <span style="color:#c084fc;">from</span> sklearn.metrics <span style="color:#c084fc;">import</span> accuracy_score, f1_score<br><br>
+        <span style="color:#64748b;"># Load raw data</span><br>
+        df = pd.read_csv(<span style="color:#fbbf24;">'raw/results.csv'</span>)<br><br>
+        <span style="color:#64748b;"># Compute metrics</span><br>
+        <span style="color:#c084fc;">for</span> method <span style="color:#c084fc;">in</span> [<span style="color:#fbbf24;">'Transformer'</span>, <span style="color:#fbbf24;">'Mamba'</span>]:<br>
+        &nbsp;&nbsp;acc = accuracy_score(y_true, df[method])<br>
+        &nbsp;&nbsp;f1 = f1_score(y_true, df[method])<br><br>
+        <span style="color:#64748b;"># Paired t-test</span><br>
+        t, p = stats.ttest_rel(transformer_preds, mamba_preds)<br>
+        <span style="color:#7dd3fc;">print</span>(<span style="color:#fbbf24;">f"t={t:.2f}, p={p:.4f}"</span>)
+      </div>`
+  };
+
+  if (content && tabContents[tabId]) {
+    content.innerHTML = tabContents[tabId];
+  }
+}
+
+// ============================================================
+// Literature Selection
+// ============================================================
+function selectLit(el) {
+  document.querySelectorAll('.lit-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ============================================================
+// Project Switching Simulation
+// ============================================================
+function switchProject() {
+  alert('切换项目（Demo 交互）');
+}
+
+// ============================================================
+// Live Log Simulation (for workspace)
+// ============================================================
+function simulateLog() {
+  const logStream = document.getElementById('log-stream');
+  if (!logStream) return;
+
+  const entries = [
+    ['14:24:15', '[EVAL]', 'computing additional metrics: precision, recall'],
+    ['14:24:22', '[EVAL]', 'generating ROC curve → figs_draft/roc.pdf'],
+    ['14:24:30', '[EVAL]', 'generating confusion matrix → figs_draft/confusion.pdf'],
+    ['14:24:38', '[EVAL]', '✅ all figures generated'],
+    ['14:24:40', '[ORCH]', 'EVALUATE complete, entering HIL_RESULT'],
+  ];
+
+  let idx = 0;
+  setInterval(() => {
+    if (idx >= entries.length) return;
+    const [time, tag, msg] = entries[idx];
+    const isCheck = msg.startsWith('✅');
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    line.innerHTML = `<span class="log-time">${time}</span><span class="log-tag">${tag}</span>${isCheck ? '<span class="log-check">' + msg + '</span>' : msg}`;
+    logStream.appendChild(line);
+    logStream.scrollTop = logStream.scrollHeight;
+    idx++;
+  }, 3000);
+}
+
+// URL param auto-navigation (for screenshot capture)
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const page = params.get('page');
+  if (page) {
+    navigateTo(page);
+  }
+})();
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  simulateLog();
+});
+</script>
+
+</body>
+</html>

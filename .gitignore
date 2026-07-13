@@ -1,0 +1,50 @@
+# OS/editor
+**/.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+**/.codebuddy/settings.local.json
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+coverage/
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+
+# Local data and generated artifacts
+.uploads/
+.chroma/
+chroma/
+*.sqlite
+*.sqlite3
+models/
+.cache/
