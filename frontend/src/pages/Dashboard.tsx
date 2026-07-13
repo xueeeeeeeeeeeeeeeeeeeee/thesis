@@ -117,6 +117,7 @@ const Dashboard: React.FC = () => {
         message.success('项目已创建')
         form.resetFields()
         setModalOpen(false)
+        navigate(`/workbench?projectId=${created.id}`)
       }
     } catch {
       // 校验失败或创建失败

@@ -198,6 +198,7 @@ const Workbench: React.FC = () => {
   const handleGenerateDraft = async (): Promise<void> => {
     if (!currentProject) return
     await renderDraft(template)
+    message.success('初稿已生成，可预览或下载')
   }
 
   const handleDownload = async (): Promise<void> => {
