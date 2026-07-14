@@ -46,6 +46,12 @@ const INTERRUPT_ACTIONS: ReadonlyArray<InterruptAction> = [
   'rollback',
   'abort',
 ];
+// 终态状态：一旦进入终态，不再自动同步（避免覆盖用户手动操作）
+const TERMINAL_STATUSES: ReadonlyArray<PipelineStatus> = [
+  'completed',
+  'aborted',
+  'error',
+];
 
 /** 构造访问者信息 */
 function requesterOf(req: AuthRequest): ProjectRequester {
@@ -265,6 +271,20 @@ export const getPipeline = asyncHandler(async (req: AuthRequest, res: Response) 
   const agentObj = (agentStatus ?? {}) as Record<string, unknown>;
   const hilPending = (agentObj.hil_pending ?? null) as unknown;
 
+  // agent 实时状态优先：MySQL 里的 pipelineStatus / currentStep 可能滞后
+  // （例如 agent 已 completed 或 interrupted，但 syncFromAgent 未及时写入）。
+  // 用 agent 的实时状态覆盖，确保前端看到最新进度。
+  const agentStatusStr = typeof agentObj.status === 'string' ? agentObj.status : '';
+  const agentStage = typeof agentObj.stage === 'string' ? agentObj.stage : '';
+  // LLM 服务 status: running/interrupted/completed/aborted/error → 前端 PipelineStatus
+  // （值恰好一致，直接用）
+  const effectiveStatus: PipelineStatus =
+    agentStatusStr && PIPELINE_STATUSES.includes(agentStatusStr as PipelineStatus)
+      ? (agentStatusStr as PipelineStatus)
+      : project.pipelineStatus;
+  const effectiveStep: string =
+    agentStage || project.currentStep || project.stage || '';
+
   // 合并 agent 实时产物到 artifacts：project.artifacts 是创建时快照（可能为空），
   // agent 实时返回的 literature / artifacts 需要合并进来，否则前端 HIL 弹窗
   // 会收到 hilPending（"文献调研完成 N 篇"）但 artifacts.literature 为空，
@@ -293,12 +313,31 @@ export const getPipeline = asyncHandler(async (req: AuthRequest, res: Response) 
     }
   }
 
+  // best-effort 回写：当 agent 实时状态与 MySQL 不一致时，异步同步
+  // （避免每次轮询都靠 agent 覆盖，也让刷新后 project.pipelineStatus 正确）
+  if (
+    agentStatusStr &&
+    effectiveStatus !== project.pipelineStatus &&
+    !TERMINAL_STATUSES.includes(project.pipelineStatus)
+  ) {
+    void projectService
+      .setPipelineStatus(project.id, effectiveStatus, effectiveStep)
+      .catch((err) => {
+        console.warn(
+          `[getPipeline] 同步状态到 MySQL 失败: ${
+            err instanceof Error ? err.message : String(err)
+          }`,
+        );
+      });
+  }
+
   res.json(
     success(
       {
         // 顶层快捷字段（前端轮询直接读这些，避免 data.project.xxx 套娃）
-        status: project.pipelineStatus,
-        currentStep: project.currentStep ?? project.stage,
+        // 优先用 agent 实时状态，MySQL 里的 pipelineStatus 可能滞后
+        status: effectiveStatus,
+        currentStep: effectiveStep,
         agentId: project.agentId ?? null,
         mode: project.mode,
         template: project.template,
