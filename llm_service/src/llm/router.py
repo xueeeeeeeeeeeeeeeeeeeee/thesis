@@ -20,7 +20,7 @@ from typing import Any, Optional
 from src.config import settings
 from src.models.schemas import ModelInfo, ModelTier
 from src.utils.logger import get_logger
-from src.llm.providers.deepseek import DeepSeekProvider
+from src.llm.providers.deepseek import ChatResult, DeepSeekProvider
 from src.llm.providers.kimi import KimiProvider
 from src.llm.providers.qwen import QwenProvider
 
@@ -104,6 +104,13 @@ class LLMRouter:
                 description="长文本（DeepSeek V4 Pro 1M context，替代 Kimi 200K）",
             ),
             ModelInfo(
+                tier=ModelTier.REASONING.value,
+                provider="deepseek",
+                model=settings.deepseek_reasoning_model,
+                available=self.deepseek.available,
+                description="推理模型（deepseek-reasoner，先思考再输出）",
+            ),
+            ModelInfo(
                 tier=ModelTier.EMBEDDING.value,
                 provider="sentence-transformers",
                 model=settings.embedding_model,
@@ -164,7 +171,30 @@ class LLMRouter:
             )
             return content, model
 
+        if tier == ModelTier.REASONING.value:
+            raise ValueError(
+                "reasoning tier 请使用 chat_with_reasoning() 方法以获取思考过程"
+            )
+
         raise ValueError(f"不支持的对话 tier：{tier}（embedding tier 仅用于向量化）")
+
+    async def chat_with_reasoning(
+        self,
+        messages: list[dict[str, str]],
+        temperature: float = 0.7,
+        max_tokens: Optional[int] = None,
+    ) -> tuple[str, str]:
+        """调用 reasoning 模型，返回 (content, reasoning_content)。
+
+        使用 deepseek-reasoner 模型，先深度思考再输出最终答案。
+        """
+        if not self.deepseek.available:
+            raise LLMNotConfiguredError("reasoning", "deepseek")
+        model = settings.deepseek_reasoning_model
+        result = await self.deepseek.chat_with_reasoning(
+            messages, model=model, temperature=temperature, max_tokens=max_tokens
+        )
+        return result.content, result.reasoning
 
     # ------------------------------------------------------------------
     # 向量化（懒加载 sentence-transformers）

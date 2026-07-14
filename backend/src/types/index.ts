@@ -23,7 +23,19 @@ export type ProjectStatus = 'draft' | 'running' | 'paused' | 'completed' | 'arch
 export type PipelineMode = 'auto' | 'manual';
 
 /** 论文初稿模板 */
-export type DraftTemplate = 'ctex' | 'ieee' | 'journal' | 'markdown';
+export type DraftTemplate = 'ctex' | 'ieee' | 'journal' | 'markdown' | 'docx';
+
+/** 论文写作学科配置，与前端选项和 LLM 服务保持一致 */
+export type DisciplineProfileKey =
+  | 'nlp'
+  | 'cv'
+  | 'biology'
+  | 'material'
+  | 'chemistry'
+  | 'physics'
+  | 'ml'
+  | 'ir'
+  | 'general';
 
 /** 流水线状态 */
 export type PipelineStatus =
@@ -71,6 +83,11 @@ export interface ExperimentInput {
 
 /** 流水线产物（分阶段沉淀的中间结果） */
 export interface ProjectArtifacts {
+  /** 论文/生成要求 */
+  requirements?: {
+    /** 目标字数，单位：中文字符/词的演示级约束 */
+    wordLimit?: number;
+  };
   /** 文献综述产物 */
   literature?: unknown;
   /** 实验/方案设计产物 */
@@ -83,6 +100,20 @@ export interface ProjectArtifacts {
   discussion?: string;
   /** 论文章节字典（abstract/introduction/method/results/discussion/conclusion） */
   paperSections?: Record<string, string>;
+  /** 多 Agent 分章节写作计划与字数审校结果 */
+  writingPlan?: {
+    targetCharacters: number;
+    actualCharacters: number;
+    disciplineProfile: DisciplineProfileKey;
+    researchApproach: 'disciplinary' | 'societal_impact';
+    agents: Array<{
+      section: string;
+      role: string;
+      targetCharacters: number;
+      focus: string;
+    }>;
+    editorialChecks: string[];
+  };
   /** 论文图表元数据列表 */
   figures?: Array<Record<string, unknown>>;
   /** 最近一次渲染出的初稿文本 */
@@ -161,6 +192,8 @@ export interface CreateProjectInput {
   discipline: string;
   question: string;
   description?: string;
+  /** 论文目标字数 */
+  wordLimit?: number;
   /** 流水线模式，可选，默认 auto */
   mode?: PipelineMode;
   /** 初稿模板，可选，默认 markdown */
@@ -173,6 +206,8 @@ export interface UpdateProjectInput {
   discipline?: string;
   question?: string;
   description?: string;
+  /** 论文目标字数 */
+  wordLimit?: number;
   stage?: ProjectStage;
   status?: ProjectStatus;
   /** 流水线运行模式 */

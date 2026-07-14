@@ -17,6 +17,7 @@ export interface CreateProjectPayload {
   discipline: string
   question: string
   description?: string
+  wordLimit?: number
   mode?: PipelineMode
   template?: DraftTemplate
 }
@@ -26,6 +27,7 @@ export interface UpdateProjectPayload {
   discipline?: string
   question?: string
   description?: string
+  wordLimit?: number
   mode?: PipelineMode
   template?: DraftTemplate
 }

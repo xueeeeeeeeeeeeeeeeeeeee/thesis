@@ -40,6 +40,7 @@ import {
   setTemplateApi,
   getDraftApi,
   renderDraftApi,
+  runDemoPipelineApi,
   downloadDraftApi,
 } from './pipeline'
 
@@ -66,6 +67,12 @@ describe('services/pipeline', () => {
     ;(post as any).mockResolvedValueOnce({ code: 0, data: {} })
     await abortPipelineApi('p1')
     expect(post).toHaveBeenCalledWith('/projects/p1/pipeline/abort')
+  })
+
+  it('runDemoPipelineApi 调用 POST /projects/:id/pipeline/demo-run', async () => {
+    ;(post as any).mockResolvedValueOnce({ code: 0, data: {} })
+    await runDemoPipelineApi('p1')
+    expect(post).toHaveBeenCalledWith('/projects/p1/pipeline/demo-run')
   })
 
   it('setModeApi 调用 PATCH /projects/:id/pipeline/mode，传 { mode }', async () => {

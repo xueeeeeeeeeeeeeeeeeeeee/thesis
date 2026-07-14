@@ -78,7 +78,18 @@ export type ProjectStatus =
 export type PipelineMode = 'auto' | 'manual'
 
 // 初稿模板类型
-export type DraftTemplate = 'ctex' | 'ieee' | 'journal' | 'markdown'
+export type DraftTemplate = 'ctex' | 'ieee' | 'journal' | 'markdown' | 'docx'
+
+export type DisciplineProfileKey =
+  | 'nlp'
+  | 'cv'
+  | 'biology'
+  | 'material'
+  | 'chemistry'
+  | 'physics'
+  | 'ml'
+  | 'ir'
+  | 'general'
 
 // 流水线状态机
 export type PipelineStatus =
@@ -111,6 +122,9 @@ export interface ExperimentFormData {
 
 // 流水线产物
 export interface PipelineArtifacts {
+  requirements?: {
+    wordLimit?: number
+  }
   literature?: unknown[] // 文献列表
   design?: {
     method?: string
@@ -126,9 +140,28 @@ export interface PipelineArtifacts {
     points?: string[]
     limitations?: string[]
   }
-  paperSections?: { type: string; title: string; content: string }[]
+  paperSections?: Record<string, string> | { type: string; title: string; content: string }[]
+  writingPlan?: {
+    targetCharacters: number
+    actualCharacters: number
+    disciplineProfile: DisciplineProfileKey
+    researchApproach: 'disciplinary' | 'societal_impact'
+    agents: Array<{
+      section: string
+      role: string
+      targetCharacters: number
+      focus: string
+    }>
+    editorialChecks: string[]
+  }
   figures?: { name: string; caption: string; dataUrl?: string }[]
   draftText?: string // 当前模板的渲染后草稿
+  // DeepSeek 推理模型的思考过程（write 阶段产出）
+  thinking?: {
+    guide: string // 结构化写作指导（content）
+    reasoning: string // 原始思考链（reasoning_content，可能为空）
+    hasReasoning?: boolean // 是否有独立的思考链
+  }
 }
 
 // HIL 提案载荷
@@ -154,6 +187,7 @@ export interface Project {
   owner?: string // 旧字段
   ownerId?: string // 后端字段
   question?: string // 后端字段
+  wordLimit?: number // 兼容表单/本地产物，后端实际存在 artifacts.requirements.wordLimit
   versions?: Version[] // 版本列表
   hilQueue?: unknown[] // HIL 队列
   // 流水线相关

@@ -23,8 +23,10 @@ export interface RunAgentParams {
   startStage?: ProjectStage;
   /** 运行模式：auto 全自动 / manual 遇 HIL 暂停（默认 auto） */
   mode?: 'auto' | 'manual';
-  /** 草稿模板：ctex/ieee/journal/markdown（默认 markdown） */
-  template?: 'ctex' | 'ieee' | 'journal' | 'markdown';
+  /** 草稿模板：ctex/ieee/journal/markdown/docx（默认 markdown） */
+  template?: 'ctex' | 'ieee' | 'journal' | 'markdown' | 'docx';
+  /** 论文目标字数 */
+  wordLimit?: number;
 }
 
 /**
@@ -119,6 +121,7 @@ class LlmService {
       start_stage: safeStage,
       mode: params.mode ?? 'auto',
       template: params.template ?? 'markdown',
+      word_limit: params.wordLimit,
     })) as RunAgentResponse;
     return result;
   }

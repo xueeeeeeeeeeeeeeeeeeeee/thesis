@@ -12,6 +12,7 @@ import {
   Modal,
   Form,
   Input,
+  InputNumber,
   Select,
   Radio,
   Timeline,
@@ -110,6 +111,7 @@ const Dashboard: React.FC = () => {
         discipline: values.discipline,
         question: values.question,
         description: values.description,
+        wordLimit: values.wordLimit,
         mode: values.mode as PipelineMode,
         template: values.template as DraftTemplate,
       })
@@ -357,7 +359,7 @@ const Dashboard: React.FC = () => {
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ discipline: 'NLP', mode: 'auto', template: 'markdown' }}
+          initialValues={{ discipline: 'NLP', wordLimit: 3000, mode: 'auto', template: 'markdown' }}
         >
           <Form.Item
             name="name"
@@ -398,6 +400,24 @@ const Dashboard: React.FC = () => {
             <Input.TextArea
               rows={2}
               placeholder="简要描述研究目标与核心方法"
+            />
+          </Form.Item>
+          <Form.Item
+            name="wordLimit"
+            label="论文字数要求"
+            rules={[
+              { required: true, message: '请输入论文字数要求' },
+              { type: 'number', min: 800, max: 50000, message: '字数要求需在 800 到 50000 之间' },
+            ]}
+            extra="用于约束初稿长度和人工审阅目标，例如课程 demo 可填 3000。"
+          >
+            <InputNumber
+              min={800}
+              max={50000}
+              step={500}
+              addonAfter="字"
+              style={{ width: '100%' }}
+              placeholder="例如：3000"
             />
           </Form.Item>
           <Form.Item

@@ -12,6 +12,8 @@ export interface PipelineStatusResponse {
   agentId?: string
   status: PipelineStatus
   currentStep?: StageKey
+  mode?: PipelineMode
+  template?: DraftTemplate
   artifacts?: {
     literature?: unknown[]
     design?: { method?: string; hypothesis?: string; plan?: string }
@@ -21,7 +23,7 @@ export interface PipelineStatusResponse {
       conclusion?: string
     }
     discussion?: { points?: string[]; limitations?: string[] }
-    paperSections?: { type: string; title: string; content: string }[]
+    paperSections?: Record<string, string> | { type: string; title: string; content: string }[]
     figures?: { name: string; caption: string; dataUrl?: string }[]
     draftText?: string
   }
@@ -43,6 +45,8 @@ export interface HILResumePayload {
     text?: string
     comment?: string
     experiment_results?: import('@/types').ExperimentFormData
+    /** design 阶段：用户上传的文献列表（覆盖系统检索结果） */
+    literature?: { title?: string; authors?: string[]; year?: number; doi?: string | null; url?: string | null; source?: string; abstract?: string }[]
   }
 }
 
@@ -76,6 +80,12 @@ export const abortPipelineApi = (
   projectId: string,
 ): Promise<ApiResponse<{ success: boolean }>> =>
   post<ApiResponse<{ success: boolean }>>(`/projects/${projectId}/pipeline/abort`)
+
+// 本地确定性跑完 8 阶段（demo / LLM 服务不可用兜底）
+export const runDemoPipelineApi = (
+  projectId: string,
+): Promise<ApiResponse<PipelineStatusResponse>> =>
+  post<ApiResponse<PipelineStatusResponse>>(`/projects/${projectId}/pipeline/demo-run`)
 
 // 切换推进模式（auto / manual）
 export const setModeApi = (

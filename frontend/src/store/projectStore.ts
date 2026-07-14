@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Project, HILItem, StageKey } from '@/types'
+import type { DraftTemplate, Project, HILItem, StageKey } from '@/types'
 import {
   fetchProjectsApi,
   fetchProjectApi,
@@ -35,13 +35,15 @@ interface ProjectState {
     discipline: string
     question: string
     description?: string
+    wordLimit?: number
     mode?: 'auto' | 'manual'
-    template?: 'ctex' | 'ieee' | 'journal' | 'markdown'
+    template?: DraftTemplate
   }) => Promise<Project | null>
   updateProject: (id: string, payload: UpdateProjectPayload) => Promise<Project | null>
   advanceStage: (projectId?: string) => Promise<void>
   pushHIL: (item: HILItem) => void
   resolveHIL: (id: string) => void
+  upsertProject: (project: Project) => void
   setProjects: (projects: Project[]) => void
   reset: () => void
 }
@@ -130,6 +132,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         discipline: payload.discipline,
         question: payload.question,
         description: payload.description,
+        wordLimit: payload.wordLimit,
         mode: payload.mode,
         template: payload.template,
       })
@@ -203,6 +206,24 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     set((state) => ({
       hilQueue: state.hilQueue.filter((h) => h.id !== id),
     }))
+  },
+
+  upsertProject: (project) => {
+    set((state) => {
+      const exists = state.projects.some((p) => p.id === project.id)
+      const projects = exists
+        ? state.projects.map((p) => (p.id === project.id ? project : p))
+        : [project, ...state.projects]
+      return {
+        projects,
+        currentProject:
+          state.currentProject?.id === project.id ? project : state.currentProject,
+        stage:
+          state.currentProject?.id === project.id
+            ? ((project.stage ?? project.currentStage ?? null) as StageKey | null)
+            : state.stage,
+      }
+    })
   },
 
   setProjects: (projects) => set({ projects }),

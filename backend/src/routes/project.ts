@@ -10,6 +10,7 @@ import {
   getPipeline,
   resumePipeline,
   abortPipeline,
+  runDemoPipeline,
   updatePipelineMode,
   updateDraftTemplate,
   getDraft,
@@ -36,6 +37,7 @@ import { authenticate } from '../middleware/auth';
  *   GET    /:id/pipeline           获取项目 pipeline 状态
  *   POST   /:id/pipeline/resume    恢复/推进（body: {action, payload?}）
  *   POST   /:id/pipeline/abort     中止
+ *   POST   /:id/pipeline/demo-run  本地跑完 8 阶段（demo 兜底）
  *   PATCH  /:id/pipeline/mode      切换 auto/manual
  *   PATCH  /:id/pipeline/template  切换初稿模板
  *
@@ -53,6 +55,19 @@ router.get('/', listProjects);
 router.get('/:id', getProject);
 router.post('/', createProject);
 router.patch('/:id', updateProject);
+router.post('/:id/artifacts/seed', async (req, res, next) => {
+  // Debug 端点：直接覆盖/合并项目 artifacts，用于在没有完整 LLM 流水线的情况下
+  // 验证 docx/markdown 模板的图片嵌入。生产环境应在非 dev 模式下禁用。
+  try {
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(403).json({ code: 403, message: '生产环境禁用' });
+    }
+    const { updateArtifacts } = await import('../controllers/projectController');
+    return updateArtifacts(req, res, next);
+  } catch (e) {
+    return next(e);
+  }
+});
 router.delete('/:id', deleteProject);
 router.post('/:id/advance', advanceProject);
 router.post('/:id/rollback', rollbackProject);
@@ -61,6 +76,7 @@ router.post('/:id/rollback', rollbackProject);
 router.get('/:id/pipeline', getPipeline);
 router.post('/:id/pipeline/resume', resumePipeline);
 router.post('/:id/pipeline/abort', abortPipeline);
+router.post('/:id/pipeline/demo-run', runDemoPipeline);
 router.patch('/:id/pipeline/mode', updatePipelineMode);
 router.patch('/:id/pipeline/template', updateDraftTemplate);
 

@@ -5,7 +5,13 @@
 
 from __future__ import annotations
 
+import os
 from typing import Optional
+
+# 在 import sentence-transformers/transformers 之前设置离线模式，
+# 避免 huggingface.co 超时卡死（模型已缓存到本地）
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -46,6 +52,7 @@ class Settings(BaseSettings):
     # V4 Pro：1.6T 总参 / 49B 激活，强推理（复杂任务：实验设计/评价/讨论）
     # V4 Flash：284B 总参 / 13B 激活，速度快价格低（高频任务：文献/画图/渲染）
     # V4 长文档：用 V4 Pro 的 1M context 充当长文，无需 Kimi
+    # Reasoner：deepseek-reasoner 推理模型，先思考再输出（用于论文写作前的深度推理）
     deepseek_deep_model: str = Field(
         default="deepseek-v4-pro", description="强推理模型（V4 Pro，替代 R1）"
     )
@@ -54,6 +61,9 @@ class Settings(BaseSettings):
     )
     deepseek_long_model: str = Field(
         default="deepseek-v4-pro", description="长文档模型（V4 Pro 1M context，替代 Kimi 200K）"
+    )
+    deepseek_reasoning_model: str = Field(
+        default="deepseek-reasoner", description="推理模型（先思考再输出，用于论文写作）"
     )
 
     # ---------- Embedding / Reranker ----------
@@ -74,7 +84,7 @@ class Settings(BaseSettings):
 
     # ---------- 外部学术 API ----------
     arxiv_base_url: str = Field(
-        default="http://export.arxiv.org/api/query", description="arXiv API 端点"
+        default="https://export.arxiv.org/api/query", description="arXiv API 端点"
     )
     s2_base_url: str = Field(
         default="https://api.semanticscholar.org/graph/v1",

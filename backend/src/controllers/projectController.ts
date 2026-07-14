@@ -16,6 +16,7 @@ import {
   type PipelineStatus,
 } from '../types';
 import { renderDraft, templateExtension, templateMime } from '../services/draftRenderer';
+import { renderDocx } from '../services/docxRenderer';
 
 /**
  * 项目控制器
@@ -29,6 +30,7 @@ const DRAFT_TEMPLATES: ReadonlyArray<DraftTemplate> = [
   'ieee',
   'journal',
   'markdown',
+  'docx',
 ];
 const PIPELINE_STATUSES: ReadonlyArray<PipelineStatus> = [
   'idle',
@@ -79,6 +81,20 @@ function parseMode(value: unknown): PipelineMode {
     );
   }
   return value as PipelineMode;
+}
+
+function parseWordLimit(value: unknown): number | undefined {
+  if (value === undefined || value === null || value === '') return undefined;
+  const parsed =
+    typeof value === 'number'
+      ? value
+      : typeof value === 'string'
+        ? Number(value)
+        : Number.NaN;
+  if (!Number.isFinite(parsed) || parsed < 800 || parsed > 50000) {
+    throw new ApiError('论文字数要求必须在 800 到 50000 之间', 400, -1);
+  }
+  return Math.round(parsed);
 }
 
 function parsePipelineStatus(value: unknown): PipelineStatus {
@@ -153,6 +169,7 @@ export const createProject = asyncHandler(async (req: AuthRequest, res: Response
   const requester = requesterOf(req);
   const mode: PipelineMode = body.mode === 'manual' ? 'manual' : 'auto';
   const template = parseTemplate(body.template, 'markdown');
+  const wordLimit = parseWordLimit(body.wordLimit);
 
   // 1) 先创建项目（确保项目一定能落地）
   const project = await projectService.create(
@@ -161,6 +178,7 @@ export const createProject = asyncHandler(async (req: AuthRequest, res: Response
       discipline: discipline.trim(),
       question: question.trim(),
       description: typeof description === 'string' ? description : '',
+      wordLimit,
       mode,
       template,
     },
@@ -247,6 +265,34 @@ export const getPipeline = asyncHandler(async (req: AuthRequest, res: Response) 
   const agentObj = (agentStatus ?? {}) as Record<string, unknown>;
   const hilPending = (agentObj.hil_pending ?? null) as unknown;
 
+  // 合并 agent 实时产物到 artifacts：project.artifacts 是创建时快照（可能为空），
+  // agent 实时返回的 literature / artifacts 需要合并进来，否则前端 HIL 弹窗
+  // 会收到 hilPending（"文献调研完成 N 篇"）但 artifacts.literature 为空，
+  // 导致列表区显示"系统未检索到文献"的自相矛盾。
+  const mergedArtifacts: Record<string, unknown> = {
+    ...(project.artifacts ?? {}),
+  };
+  // 1) agent 顶层的 literature 字段（文献检索结果）
+  if (Array.isArray(agentObj.literature) && agentObj.literature.length > 0) {
+    mergedArtifacts.literature = agentObj.literature;
+  }
+  // 2) agent.artifacts 里的 snake_case 字段（统一转 camelCase 与前端对齐）
+  const agentArtifacts = (agentObj.artifacts ?? {}) as Record<string, unknown>;
+  const SNAKE_CAMEL_MAP: Record<string, string> = {
+    paper_sections: 'paperSections',
+    experiment_design: 'experimentDesign',
+    experiment_results: 'experimentResults',
+    draft_text: 'draftText',
+    hil_queue: 'hilQueue',
+  };
+  for (const [k, v] of Object.entries(agentArtifacts)) {
+    const camelKey = SNAKE_CAMEL_MAP[k] ?? k;
+    // 只在 agent 有值时覆盖，避免用 null 覆盖已有数据
+    if (v !== null && v !== undefined) {
+      mergedArtifacts[camelKey] = v;
+    }
+  }
+
   res.json(
     success(
       {
@@ -256,7 +302,7 @@ export const getPipeline = asyncHandler(async (req: AuthRequest, res: Response) 
         agentId: project.agentId ?? null,
         mode: project.mode,
         template: project.template,
-        artifacts: project.artifacts ?? {},
+        artifacts: mergedArtifacts,
         hilPending,
         // 完整对象（向后兼容已有消费者）
         project,
@@ -319,7 +365,9 @@ export const resumePipeline = asyncHandler(async (req: AuthRequest, res: Respons
   } catch (err) {
     // LLM 服务异常时不影响前端显示
     const message = err instanceof Error ? err.message : String(err);
-    await projectService.setPipelineStatus(project.id, 'error', message);
+    // 注意：不要把错误信息写入 current_step（列长度有限会触发 MySQL 报错），
+    // 只更新 pipeline_status，step 保持原值
+    await projectService.setPipelineStatus(project.id, 'error');
     throw new ApiError(`恢复流水线失败: ${message}`, 503, -1);
   }
 });
@@ -345,6 +393,29 @@ export const abortPipeline = asyncHandler(async (req: AuthRequest, res: Response
   }
   const updated = await projectService.setPipelineStatus(project.id, 'aborted', 'abort');
   res.json(success({ project: updated, agentResult }, '流水线已中止'));
+});
+
+/** 本地确定性跑完 8 阶段，用于 demo / LLM 服务不可用时兜底 */
+export const runDemoPipeline = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const { id } = req.params;
+  const requester = requesterOf(req);
+  await projectService.getById(id, requester);
+  const project = await projectService.completeDemoPipeline(id);
+  res.json(
+    success(
+      {
+        status: project.pipelineStatus,
+        currentStep: project.currentStep ?? project.stage,
+        agentId: project.agentId ?? null,
+        mode: project.mode,
+        template: project.template,
+        artifacts: project.artifacts ?? {},
+        project,
+        summary: projectService.toPipelineSummary(project),
+      },
+      '演示流水线已完成',
+    ),
+  );
 });
 
 /** 切换流水线模式 */
@@ -430,6 +501,31 @@ export const renderDraftHandler = asyncHandler(
   },
 );
 
+/** 调试用：合并/覆盖项目 artifacts（仅 dev 模式） */
+export const updateArtifacts = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { id } = req.params;
+    const requester = requesterOf(req);
+    const body = req.body as {
+      artifacts?: Record<string, unknown>;
+      template?: DraftTemplate;
+    };
+    if (!body || typeof body !== 'object') {
+      throw new ApiError('body 必填', 400, -1);
+    }
+    const project = await projectService.getById(id, requester);
+    const next: Record<string, unknown> = { ...(project.artifacts ?? {}) };
+    if (body.artifacts && typeof body.artifacts === 'object') {
+      for (const [k, v] of Object.entries(body.artifacts)) {
+        next[k] = v as unknown;
+      }
+    }
+    let updated = await projectService.setArtifacts(id, next);
+    if (body.template) updated = await projectService.setTemplate(id, body.template);
+    res.json(success(updated, 'artifacts 已更新'));
+  },
+);
+
 /** 下载初稿文件 */
 export const downloadDraft = asyncHandler(
   async (req: AuthRequest, res: Response) => {
@@ -437,17 +533,13 @@ export const downloadDraft = asyncHandler(
     const requester = requesterOf(req);
     const project = await projectService.getById(id, requester);
     const artifacts = project.artifacts ?? {};
-    const text =
-      typeof artifacts.draftText === 'string' && artifacts.draftText.length > 0
-        ? artifacts.draftText
-        : renderDraft(artifacts, project.template, {
-            projectName: project.name,
-            discipline: project.discipline,
-            question: project.question,
-          }).text;
+    const renderMeta = {
+      projectName: project.name,
+      discipline: project.discipline,
+      question: project.question,
+    };
     const ext = templateExtension(project.template);
     const mime = templateMime(project.template);
-    // 兼容中文文件名：basic 用 ASCII 安全名，filename* 用 RFC 5987 UTF-8
     const safeBase =
       project.name.replace(/[^\w一-龥\-_.]/g, '_').replace(/[^\x20-\x7E]/g, '_') || 'draft';
     const utf8Name = `${project.name || 'draft'}.${ext}`;
@@ -457,6 +549,17 @@ export const downloadDraft = asyncHandler(
       'Content-Disposition',
       `attachment; filename="${asciiName}"; filename*=UTF-8''${encodeURIComponent(utf8Name)}`,
     );
+    if (project.template === 'docx') {
+      // docx 走真实二进制生成（图片以 PNG 内嵌），下载 buffer
+      const buffer = await renderDocx(artifacts, renderMeta);
+      res.setHeader('Content-Length', buffer.length.toString());
+      res.end(buffer);
+      return;
+    }
+    const text =
+      typeof artifacts.draftText === 'string' && artifacts.draftText.length > 0
+        ? artifacts.draftText
+        : renderDraft(artifacts, project.template, renderMeta).text;
     res.send(text);
   },
 );

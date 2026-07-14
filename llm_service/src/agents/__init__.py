@@ -41,6 +41,26 @@ async def llm_generate(prompt: str, tier: str = "economical") -> str:
         return ""
 
 
+async def llm_reasoning(prompt: str) -> tuple[str, str]:
+    """调用推理模型（deepseek-reasoner），返回 (content, reasoning)。
+
+    未配置 Key 或调用失败时返回空串，确保 Agent 流程不崩溃。
+    """
+    if not prompt:
+        return "", ""
+    try:
+        content, reasoning = await router.chat_with_reasoning(
+            [{"role": "user", "content": prompt}]
+        )
+        return content or "", reasoning or ""
+    except LLMNotConfiguredError as e:
+        logger.info("推理模型未配置，跳过思考阶段：%s", e)
+        return "", ""
+    except Exception as e:  # noqa: BLE001
+        logger.warning("推理模型调用失败，跳过思考阶段：%s", e)
+        return "", ""
+
+
 def safe_json_loads(
     text: str,
     default: Any = None,

@@ -1,4 +1,6 @@
+import { spawnSync } from 'node:child_process';
 import type { DraftTemplate, ProjectArtifacts } from '../types';
+import { resolveWritingProfile } from './disciplineProfiles';
 
 /**
  * 初稿模板渲染服务
@@ -22,7 +24,7 @@ interface RenderResult {
 }
 
 /** 模板白名单 */
-const TEMPLATES: ReadonlyArray<DraftTemplate> = ['ctex', 'ieee', 'journal', 'markdown'];
+const TEMPLATES: ReadonlyArray<DraftTemplate> = ['ctex', 'ieee', 'journal', 'markdown', 'docx'];
 
 /** 把章节字典拼接为有序列表 */
 function pickSections(
@@ -31,6 +33,7 @@ function pickSections(
   if (!sections || typeof sections !== 'object') return [];
   const order = [
     'abstract',
+    'keywords',
     'introduction',
     'method',
     'results',
@@ -258,18 +261,33 @@ function pickTemplate(t: DraftTemplate): string {
       return JOURNAL_TEMPLATE;
     case 'markdown':
       return MARKDOWN_TEMPLATE;
+    case 'docx':
+      // docx 不在文本模板中（由 docxRenderer 输出真实 .docx 二进制）
+      return MARKDOWN_TEMPLATE;
     default:
       return MARKDOWN_TEMPLATE;
   }
 }
 
 /** 渲染 markdown 风格图块（latex 风格模板仍可兼容） */
-function renderFiguresBlock(figureList: string[], template: DraftTemplate): string {
+function renderFiguresBlock(
+  figureList: string[],
+  figureImages: Array<{ title: string; caption: string; dataUrl: string | null }>,
+  template: DraftTemplate,
+): string {
   if (figureList.length === 0) return '';
+  if (template === 'docx') {
+    return figureList.map((c, i) => `[图 ${i + 1}] ${c}`).join('\n\n');
+  }
   if (template === 'markdown') {
-    return figureList
-      .map((caption, idx) => `### 图 ${idx + 1}\n\n${caption}\n`)
-      .join('\n');
+    return figureImages
+      .map((fig, idx) => {
+        const imgLine = fig.dataUrl
+          ? `![${fig.title}](${fig.dataUrl})`
+          : `> （图片生成失败：${fig.caption || '无说明'}）`;
+        return `### 图 ${idx + 1} ${fig.title}\n\n${imgLine}\n\n${fig.caption}`;
+      })
+      .join('\n\n');
   }
   return figureList
     .map(
@@ -277,6 +295,66 @@ function renderFiguresBlock(figureList: string[], template: DraftTemplate): stri
         `\\begin{figure}[!t]\n\\centering\n\\includegraphics[width=0.45\\textwidth]{figure${idx + 1}.png}\n\\caption{${caption.replace(/\n/g, ' ')}}\n\\end{figure}`,
     )
     .join('\n\n');
+}
+
+/** 尝试用 matplotlib 渲染 figures[i].code（同步执行，子进程隔离） */
+function renderFiguresAsBase64(
+  figures: ProjectArtifacts['figures'],
+): Array<{ title: string; caption: string; dataUrl: string | null }> {
+  if (!Array.isArray(figures)) return [];
+  return figures.map((f, idx) => {
+    const obj = (f ?? {}) as Record<string, unknown>;
+    const title = typeof obj.title === 'string' ? obj.title : `图 ${idx + 1}`;
+    const caption = typeof obj.caption === 'string' ? obj.caption : '';
+    const code = typeof obj.code === 'string' ? obj.code : '';
+    let dataUrl: string | null = null;
+    if (code.trim()) {
+      try {
+        dataUrl = renderMatplotlibToBase64(code);
+      } catch (err) {
+        console.warn(
+          `[draftRenderer] figure ${idx + 1} 渲染失败: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    }
+    return { title, caption, dataUrl };
+  });
+}
+
+/** 通过 python3 把 matplotlib 代码执行成 PNG，输出 base64 dataURL；失败返回 null */
+function renderMatplotlibToBase64(code: string): string | null {
+  const indent = code
+    .split('\n')
+    .map((l) => '    ' + l)
+    .join('\n');
+  const wrapper = `
+import io, base64, sys
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+plt.rcParams["axes.unicode_minus"] = False
+try:
+${indent}
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png", bbox_inches="tight", dpi=120)
+    plt.close("all")
+    sys.stdout.write(base64.b64encode(buf.getvalue()).decode("ascii"))
+except Exception as e:
+    sys.stderr.write(str(e))
+    sys.exit(1)
+`;
+  const result = spawnSync('python3', ['-c', wrapper], {
+    encoding: 'utf-8',
+    timeout: 15_000,
+    maxBuffer: 8 * 1024 * 1024,
+    env: { ...process.env, MPLCONFIGDIR: process.env.TMPDIR || '/tmp' },
+  });
+  if (result.status !== 0) {
+    throw new Error(result.stderr || 'matplotlib 执行失败');
+  }
+  const b64 = result.stdout.trim();
+  if (!b64) throw new Error('matplotlib 输出为空');
+  return `data:image/png;base64,${b64}`;
 }
 
 function renderReferences(refs: string[]): string {
@@ -294,6 +372,22 @@ function sectionToText(key: string, value: string): string {
   // 空值占位，避免模板里出现空段
   if (!value || !value.trim()) return '_（待生成）_';
   return value.trim();
+}
+
+function renderProfileMarkdown(
+  sectionMap: Map<string, string>,
+  meta: { projectName: string; discipline: string; question: string },
+): string {
+  const profile = resolveWritingProfile(meta.discipline, meta.question);
+  const topic = meta.question || meta.projectName || '本研究';
+  return profile.sections
+    .map((section) => {
+      const fallback = section.key === 'keywords'
+        ? `关键词：${profile.keywords.join('；')}`
+        : `本节围绕“${topic}”展开，重点说明${section.focus}。当前内容为待验证初稿，不把模拟信息表述为真实发现。`;
+      return `## ${section.title}\n${sectionToText(section.key, sectionMap.get(section.key) ?? fallback)}`;
+    })
+    .join('\n\n');
 }
 
 function buildFallbackSections(meta: {
@@ -356,10 +450,22 @@ export function renderDraft(
       ...sections.map((s) => [s.key, s.value] as [string, string]),
     ]);
     const figures = pickFigures(artifacts.figures);
+    const figureImages = renderFiguresAsBase64(artifacts.figures);
     const refs = pickReferences(artifacts);
 
     const title = meta.projectName || meta.question || '未命名研究';
     const discipline = meta.discipline || '通用';
+
+    if (safeTemplate === 'markdown' || safeTemplate === 'docx') {
+      const sectionBlock = renderProfileMarkdown(sectionMap, meta);
+      const figureBlock = renderFiguresBlock(figures, figureImages, safeTemplate);
+      const safeRefs = refs.length > 0 ? refs : fallbackReferences(meta.question);
+      const referenceBlock = safeRefs.map((ref, index) => `${index + 1}. ${ref}`).join('\n');
+      return {
+        text: `# ${title}\n\n> 学科: ${discipline}\n\n${sectionBlock}\n\n${figureBlock}\n\n## 参考文献\n${referenceBlock}\n`,
+        template: safeTemplate,
+      };
+    }
 
     const replacements: Array<[string, string]> = [
       ['<TITLE>', escapeTemplate(title)],
@@ -377,7 +483,7 @@ export function renderDraft(
         '<CONCLUSION>',
         sectionToText('conclusion', sectionMap.get('conclusion') ?? ''),
       ],
-      ['<FIGURES_BLOCK>', renderFiguresBlock(figures, safeTemplate)],
+      ['<FIGURES_BLOCK>', renderFiguresBlock(figures, figureImages, safeTemplate)],
       ['<REFERENCES>', renderReferences(refs.length > 0 ? refs : fallbackReferences(meta.question))],
     ];
     let replaced = tpl;
@@ -454,12 +560,13 @@ export function templateExtension(template: DraftTemplate): string {
       return 'tex';
     case 'markdown':
       return 'md';
+    case 'docx':
+      return 'docx';
     default:
       return 'txt';
   }
 }
 
-/** 渲染时根据模板选择 MIME（下载接口使用） */
 export function templateMime(template: DraftTemplate): string {
   switch (template) {
     case 'ctex':
@@ -468,6 +575,8 @@ export function templateMime(template: DraftTemplate): string {
       return 'application/x-tex';
     case 'markdown':
       return 'text/markdown';
+    case 'docx':
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     default:
       return 'text/plain';
   }

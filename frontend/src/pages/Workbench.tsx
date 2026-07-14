@@ -19,6 +19,7 @@ import {
   Alert,
   Tooltip,
   Popconfirm,
+  Collapse,
   message,
 } from 'antd'
 import {
@@ -40,6 +41,7 @@ import {
   ExperimentOutlined,
   MessageOutlined,
   SendOutlined,
+  BulbOutlined,
 } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import PageContainer from '@/components/PageContainer'
@@ -107,6 +109,7 @@ const Workbench: React.FC = () => {
     currentStep,
     artifacts,
     hilPending,
+    triggeredHILs,
     logs,
     draftText,
     startPipeline,
@@ -117,9 +120,23 @@ const Workbench: React.FC = () => {
     renderDraft,
     projectId: pipelineProjectId,
     stopPolling,
+    setHilPending,
   } = usePipelineStore()
 
   const [downloading, setDownloading] = useState(false)
+  // HIL 弹窗的"已收起"标记。点 X / 遮罩 / ESC 时收起，hilPending 保留在 store 里待后续处理。
+  // 当 hilPending 切换到新对象时（同一项目再来一次 HIL）自动重新弹出。
+  const [hilDialogDismissed, setHilDialogDismissed] = useState(false)
+  useEffect(() => {
+    if (hilPending) setHilDialogDismissed(false)
+  }, [hilPending])
+
+  // 用户点击查看的历史步骤（null=跟随当前流水线阶段）
+  const [selectedStep, setSelectedStep] = useState<StageKey | null>(null)
+  // 流水线推进到新阶段时自动回到当前步骤
+  useEffect(() => {
+    setSelectedStep(null)
+  }, [currentStep])
 
   // URL 参数恢复项目
   useEffect(() => {
@@ -154,11 +171,23 @@ const Workbench: React.FC = () => {
   // 旧版"本地模拟日志"已移除：日志只来自后端真实事件 / WS 推送 / 用户操作。
   // 真实流水线进度通过 pollStatus 轮询 /projects/:id/pipeline 获取。
 
-  const stageKey = (currentProject?.currentStep ?? currentProject?.stage ?? currentStep ?? null) as
-    | StageKey
-    | null
+  const stageKey = (
+    (pipelineProjectId === currentProject?.id ? currentStep : null) ??
+    currentProject?.currentStep ??
+    currentProject?.stage ??
+    currentStep ??
+    null
+  ) as StageKey | null
   const currentStageDef = useMemo(() => (stageKey ? getStage(stageKey) : null), [stageKey])
   const currentStageIdx = getStageIndex(stageKey)
+
+  // 展示用步骤：用户点击查看历史时用 selectedStep，否则跟随当前流水线阶段
+  const displayStep = selectedStep ?? stageKey
+  const displayStageDef = useMemo(
+    () => (displayStep ? getStage(displayStep) : null),
+    [displayStep],
+  )
+  const isReviewingHistory = selectedStep !== null && selectedStep !== stageKey
 
   // HIL 队列（从 store 派生）
   const hilQueue = useMemo(
@@ -231,25 +260,49 @@ const Workbench: React.FC = () => {
     await setTemplate(val)
   }
 
-  // HIL 弹窗操作
-  const hilConfirm = async (text: string): Promise<void> => {
-    await resumePipeline('confirm', { text })
-    message.success('已通过，流水线继续')
+  // HIL 弹窗操作 — 关键：点完按钮立即关闭弹窗，后端请求后台异步执行，
+  // 进度通过实时日志 + 下一次 HIL 自动弹窗反馈，避免卡死感。
+  const closeHilNow = (): void => {
+    setHilDialogDismissed(true)
+    setHilPending(null)
   }
-  const hilEdit = async (text: string): Promise<void> => {
-    await resumePipeline('edit', { text })
-    message.success('已编辑确认，流水线继续')
+  const hilConfirm = (text: string): void => {
+    closeHilNow()
+    message.success({ content: '已通过，流水线继续运行…', key: 'hil-submit' })
+    void resumePipeline('confirm', { text })
+  }
+  const hilEdit = (text: string): void => {
+    closeHilNow()
+    message.success({ content: '已编辑确认，流水线继续运行…', key: 'hil-submit' })
+    void resumePipeline('edit', { text })
   }
   // experiment 阶段：用户填表单提交实验结果
-  const hilEditExperiment = async (data: import('@/types').ExperimentFormData): Promise<void> => {
-    await resumePipeline('edit', { experiment_results: data })
-    message.success('实验结果已提交，进入评估阶段')
+  const hilEditExperiment = (data: import('@/types').ExperimentFormData): void => {
+    closeHilNow()
+    message.success({ content: '实验结果已提交，正在进入评估阶段…', key: 'hil-submit' })
+    void resumePipeline('edit', { experiment_results: data })
   }
-  const hilRollback = async (): Promise<void> => {
-    await resumePipeline('rollback')
+  // design 阶段：用户选择文献来源（自动检索 / 上传文献）
+  const hilEditLiterature = (
+    mode: 'auto' | 'upload',
+    uploadedLits?: { title?: string; authors?: string[]; year?: number; doi?: string | null; source?: string }[],
+  ): void => {
+    closeHilNow()
+    if (mode === 'upload' && uploadedLits && uploadedLits.length > 0) {
+      message.success({ content: `已采用用户上传的 ${uploadedLits.length} 篇文献，继续运行…`, key: 'hil-submit' })
+      void resumePipeline('edit', { literature: uploadedLits })
+    } else {
+      message.success({ content: '已确认使用系统检索的文献，继续运行…', key: 'hil-submit' })
+      void resumePipeline('confirm', {})
+    }
   }
-  const hilAbort = async (): Promise<void> => {
-    await resumePipeline('abort')
+  const hilRollback = (): void => {
+    closeHilNow()
+    void resumePipeline('rollback')
+  }
+  const hilAbort = (): void => {
+    closeHilNow()
+    void resumePipeline('abort')
   }
 
   if (!currentProject) {
@@ -293,6 +346,16 @@ const Workbench: React.FC = () => {
                 text={STATUS_LABEL_MAP[status]}
                 pulse={status === 'running'}
               />
+              {hilPending && hilDialogDismissed && (
+                <Button
+                  type="primary"
+                  size="small"
+                  icon={<WarningOutlined />}
+                  onClick={() => setHilDialogDismissed(false)}
+                >
+                  恢复 HIL 审阅（{hilPending.stage}）
+                </Button>
+              )}
             </Space>
           }
         >
@@ -357,44 +420,96 @@ const Workbench: React.FC = () => {
                   direction="vertical"
                   current={currentStageIdx}
                   size="small"
-                  items={STAGES.map((s) => ({
-                    title: s.label,
-                    description: s.description,
-                    status:
-                      getStageIndex(s.key) < currentStageIdx
-                        ? 'finish'
-                        : getStageIndex(s.key) === currentStageIdx
-                          ? 'process'
-                          : 'wait',
-                    icon:
-                      getStageIndex(s.key) < currentStageIdx ? (
-                        <CheckCircleOutlined style={{ color: '#16a34a' }} />
-                      ) : getStageIndex(s.key) === currentStageIdx ? (
-                        <ClockCircleOutlined style={{ color: s.color }} />
+                  items={STAGES.map((s) => {
+                    const sIdx = getStageIndex(s.key)
+                    const isFinished = sIdx < currentStageIdx
+                    const isCurrent = sIdx === currentStageIdx
+                    const isClickable = isFinished || isCurrent
+                    const isSelected = selectedStep === s.key
+                    return {
+                      title: (
+                        <span
+                          style={{
+                            cursor: isClickable ? 'pointer' : 'default',
+                            color: isSelected ? '#2563eb' : undefined,
+                            fontWeight: isSelected ? 600 : undefined,
+                          }}
+                          onClick={() => {
+                            if (isClickable) setSelectedStep(isSelected ? null : s.key)
+                          }}
+                        >
+                          {s.label}
+                          {isSelected && (
+                            <Tag color="blue" style={{ marginLeft: 6, fontSize: 11 }}>
+                              查看中
+                            </Tag>
+                          )}
+                        </span>
+                      ),
+                      description: s.description,
+                      status: isSelected
+                        ? ('process' as const)
+                        : isFinished
+                          ? ('finish' as const)
+                          : isCurrent
+                            ? ('process' as const)
+                            : ('wait' as const),
+                      icon: isFinished ? (
+                        <CheckCircleOutlined
+                          style={{
+                            color: isSelected ? '#2563eb' : '#16a34a',
+                            cursor: isClickable ? 'pointer' : 'default',
+                          }}
+                          onClick={() => {
+                            if (isClickable) setSelectedStep(isSelected ? null : s.key)
+                          }}
+                        />
+                      ) : isCurrent ? (
+                        <ClockCircleOutlined
+                          style={{ color: s.color, cursor: isClickable ? 'pointer' : 'default' }}
+                          onClick={() => {
+                            if (isClickable) setSelectedStep(isSelected ? null : s.key)
+                          }}
+                        />
                       ) : undefined,
-                  }))}
+                    }
+                  })}
                 />
                 {/* HIL 中断点徽标 */}
                 <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {HIL_STAGES.map((h) => {
-                    const triggered = hilQueue.some((q) => q.stage === h.key)
+                    // 三态：未触发（还没到这步）/ 待审阅（当前 hilPending）/ 已审阅（曾经触发过 hilPending 已被清掉）
+                    const isActive = hilPending?.stage === h.key
+                    const isTriggered = triggeredHILs.includes(h.key)
+                    const state: 'pending' | 'done' | 'idle' = isActive
+                      ? 'pending'
+                      : isTriggered
+                        ? 'done'
+                        : 'idle'
+                    const bg = state === 'pending' ? '#fef3c7' : state === 'done' ? '#ecfdf5' : '#f8fafc'
+                    const borderColor =
+                      state === 'pending' ? '#fcd34d' : state === 'done' ? '#86efac' : '#e2e8f0'
                     return (
                       <div
                         key={h.key}
                         style={{
                           padding: '8px 10px',
                           borderRadius: 6,
-                          background: triggered ? '#fef3c7' : '#f8fafc',
-                          border: `1px solid ${triggered ? '#fcd34d' : '#e2e8f0'}`,
+                          background: bg,
+                          border: `1px solid ${borderColor}`,
                         }}
                       >
                         <Space style={{ width: '100%', justifyContent: 'space-between' }}>
                           <Text strong style={{ fontSize: 13 }}>
                             HIL · {h.label}
                           </Text>
-                          {triggered ? (
+                          {state === 'pending' ? (
                             <Tag color="warning" style={{ marginRight: 0 }}>
                               待审阅
+                            </Tag>
+                          ) : state === 'done' ? (
+                            <Tag color="success" style={{ marginRight: 0 }}>
+                              已审阅
                             </Tag>
                           ) : (
                             <Tag style={{ marginRight: 0 }}>未触发</Tag>
@@ -410,38 +525,98 @@ const Workbench: React.FC = () => {
               </Card>
             </Col>
 
-            {/* 中：当前步骤的 Agent 输出区 */}
+            {/* 中：当前/选中步骤的 Agent 输出区 */}
             <Col xs={24} xl={10}>
               <Card
                 className="rap-card-shadow"
                 variant="borderless"
                 title={
                   <span>
-                    <RobotOutlined style={{ color: currentStageDef?.color ?? '#2563eb' }} />
-                    Agent 输出 · {currentStageDef?.label ?? '尚未启动'}
+                    <RobotOutlined style={{ color: displayStageDef?.color ?? '#2563eb' }} />
+                    {isReviewingHistory ? '历史回看' : 'Agent 输出'} · {displayStageDef?.label ?? '尚未启动'}
                   </span>
                 }
                 extra={
-                  <Tag color={status === 'running' ? 'processing' : 'default'}>
-                    {status === 'running' ? '实时' : STATUS_LABEL_MAP[status]}
-                  </Tag>
+                  <Space>
+                    {isReviewingHistory && (
+                      <Button
+                        size="small"
+                        type="link"
+                        icon={<RollbackOutlined />}
+                        onClick={() => setSelectedStep(null)}
+                      >
+                        返回当前步骤
+                      </Button>
+                    )}
+                    <Tag color={isReviewingHistory ? 'blue' : status === 'running' ? 'processing' : 'default'}>
+                      {isReviewingHistory
+                        ? '查看历史'
+                        : status === 'running'
+                          ? '实时'
+                          : STATUS_LABEL_MAP[status]}
+                    </Tag>
+                  </Space>
                 }
                 style={{ marginBottom: 16 }}
               >
-                {/* 关键节点高亮（阶段名与后端对齐：evaluate/discuss/write/submit） */}
-                {currentStep === 'literature' && <LiteratureHighlight artifacts={artifacts} />}
-                {currentStep === 'design' && <DesignHighlight artifacts={artifacts} />}
-                {currentStep === 'experiment' && <ExperimentHighlight artifacts={artifacts} />}
-                {currentStep === 'evaluate' && <EvaluationHighlight artifacts={artifacts} />}
-                {currentStep === 'discuss' && <DiscussionHighlight artifacts={artifacts} />}
-                {currentStep === 'write' && <WritingHighlight artifacts={artifacts} />}
-                {currentStep === 'figure' && <FigureHighlight artifacts={artifacts} />}
-                {currentStep === 'submit' && <SubmissionHighlight artifacts={artifacts} />}
+                {/* 查看历史时的提示条 */}
+                {isReviewingHistory && (
+                  <Alert
+                    type="info"
+                    showIcon
+                    style={{ marginBottom: 8 }}
+                    message={`正在查看「${displayStageDef?.label}」阶段的已保存产物（当前流水线仍在 ${currentStageDef?.label ?? '—'} 阶段）`}
+                  />
+                )}
+                {/* 关键节点高亮：用 displayStep 决定渲染哪个阶段产物 */}
+                {displayStep === 'literature' && <LiteratureHighlight artifacts={artifacts} />}
+                {displayStep === 'design' && <DesignHighlight artifacts={artifacts} />}
+                {displayStep === 'experiment' && <ExperimentHighlight artifacts={artifacts} />}
+                {displayStep === 'evaluate' && <EvaluationHighlight artifacts={artifacts} />}
+                {displayStep === 'discuss' && <DiscussionHighlight artifacts={artifacts} />}
+                {displayStep === 'write' && <WritingHighlight artifacts={artifacts} />}
+                {displayStep === 'figure' && <FigureHighlight artifacts={artifacts} />}
+                {displayStep === 'submit' && <SubmissionHighlight artifacts={artifacts} />}
+
+                {/* 该阶段暂无产物时的空状态 */}
+                {displayStep && !hasArtifact(artifacts, displayStep) && (
+                  status === 'running' && !isReviewingHistory && !hilPending ? (
+                    <div
+                      style={{
+                        margin: '16px 0',
+                        padding: '24px 16px',
+                        textAlign: 'center',
+                        background: '#f8fafc',
+                        borderRadius: 8,
+                      }}
+                    >
+                      <Spin
+                        size="large"
+                        tip={
+                          displayStep === 'literature'
+                            ? '正在检索文献，请稍候…'
+                            : `正在执行「${displayStageDef?.label ?? displayStep}」阶段，请稍候…`
+                        }
+                      >
+                        <div style={{ padding: '12px 0', color: '#64748b' }}>
+                          {displayStep === 'literature'
+                            ? 'RAG 向量检索 + arXiv/S2 补充中…'
+                            : 'Agent 正在生成阶段产物…'}
+                        </div>
+                      </Spin>
+                    </div>
+                  ) : (
+                    <Empty
+                      description={`「${displayStageDef?.label}」阶段暂无保存的产物`}
+                      style={{ margin: '12px 0' }}
+                    />
+                  )
+                )}
 
                 {/* 阶段说明 */}
-                {currentStageDef && (
+                {displayStageDef && (
                   <Paragraph type="secondary" style={{ marginTop: 8, marginBottom: 8 }}>
-                    {STAGE_DESCRIPTION[currentStageDef.key] ?? currentStageDef.description}
+                    {STAGE_DESCRIPTION[displayStageDef.key] ?? displayStageDef.description}
                   </Paragraph>
                 )}
 
@@ -512,7 +687,8 @@ const Workbench: React.FC = () => {
                               type="primary"
                               icon={<EyeOutlined />}
                               onClick={() => {
-                                // 滚动到顶部，便于用户看到弹窗自动弹出
+                                // 取消"已收起"标记，弹窗立即重新弹出
+                                setHilDialogDismissed(false)
                                 window.scrollTo({ top: 0, behavior: 'smooth' })
                               }}
                             >
@@ -536,17 +712,30 @@ const Workbench: React.FC = () => {
             </Col>
           </Row>
 
-          {/* 底部操作条 */}
-          <Card className="rap-card-shadow" variant="borderless" style={{ marginTop: 16 }}>
+          {/* 底部操作条：sticky 固定在底部，避免被长内容挤出视口；aborted 状态高亮重新启动按钮 */}
+          <Card
+            className="rap-card-shadow rap-workbench-actionbar"
+            variant="borderless"
+            style={{ marginTop: 16, position: 'sticky', bottom: 16, zIndex: 5 }}
+            styles={{ body: { padding: 12 } }}
+          >
             <Space wrap>
-              <Tooltip title="启动 / 恢复流水线">
+              <Tooltip title="启动 / 恢复流水线（aborted 状态下也会重新启动）">
                 <Button
-                  type="primary"
+                  type={status === 'aborted' ? 'primary' : 'primary'}
                   icon={<PlayCircleOutlined />}
                   onClick={() => void handleStart()}
                   loading={status === 'running' && loading}
+                  danger={status === 'aborted'}
+                  ghost={status === 'aborted'}
                 >
-                  {status === 'running' ? '运行中' : status === 'completed' ? '再次运行' : '开始'}
+                  {status === 'running'
+                    ? '运行中'
+                    : status === 'aborted'
+                    ? '重新启动'
+                    : status === 'completed'
+                    ? '再次运行'
+                    : '开始'}
                 </Button>
               </Tooltip>
               <Tooltip title="暂停当前阶段">
@@ -604,25 +793,56 @@ const Workbench: React.FC = () => {
             </Space>
           </Card>
 
-          {/* HIL 弹窗：hilPending 非空时自动弹出 */}
+          {/* HIL 弹窗：hilPending 非空且未被收起时自动弹出；点 X / 遮罩 / ESC 只是收起（不清理 hilPending），可重新打开 */}
           <HILDialog
-            open={hilPending !== null}
+            open={hilPending !== null && !hilDialogDismissed}
             stage={hilPending?.stage ?? null}
             message={hilPending?.message ?? ''}
             agentProposal={hilPending?.agentProposal ?? ''}
             experimentDesign={hilPending?.experimentDesign}
+            literature={(artifacts?.literature ?? []) as { title?: string; authors?: string[]; year?: number; doi?: string | null; url?: string | null; source?: string; abstract?: string }[]}
             title={hilPending?.title}
             submitting={loading}
             onConfirm={(t) => void hilConfirm(t)}
             onEdit={(t) => void hilEdit(t)}
             onEditExperiment={(d) => void hilEditExperiment(d)}
+            onEditLiterature={(mode, lits) => hilEditLiterature(mode, lits)}
             onRollback={() => void hilRollback()}
             onAbort={() => void hilAbort()}
+            onCancel={() => {
+              // 暂缓处理：仅收起弹窗，hilPending 保留在 store 里，可在下方"待处理 HIL"区域重新打开
+              setHilDialogDismissed(true)
+            }}
           />
         </PageContainer>
       </Content>
     </Layout>
   )
+}
+
+// 判断某阶段是否已有保存的产物（用于历史回看的空状态提示）
+const hasArtifact = (artifacts: Project['artifacts'], stage: StageKey): boolean => {
+  if (!artifacts) return false
+  switch (stage) {
+    case 'literature':
+      return Array.isArray(artifacts.literature) && artifacts.literature.length > 0
+    case 'design':
+      return !!artifacts.design
+    case 'experiment':
+      return !!artifacts.experiment
+    case 'evaluate':
+      return !!artifacts.evaluation
+    case 'discuss':
+      return !!artifacts.discussion
+    case 'write':
+      return !!artifacts.paperSections || !!artifacts.thinking
+    case 'figure':
+      return Array.isArray(artifacts.figures) && artifacts.figures.length > 0
+    case 'submit':
+      return !!(artifacts as Record<string, unknown>).submission
+    default:
+      return false
+  }
 }
 
 // 关键节点高亮组件
@@ -721,33 +941,158 @@ const EvaluationHighlight: React.FC<{ artifacts: Project['artifacts'] }> = ({ ar
 }
 
 const WritingHighlight: React.FC<{ artifacts: Project['artifacts'] }> = ({ artifacts }) => {
-  const sections = artifacts?.paperSections ?? []
-  if (sections.length === 0) return null
+  const thinking = artifacts?.thinking
+  const rawSections = artifacts?.paperSections
+  const sections = Array.isArray(rawSections)
+    ? rawSections
+    : rawSections && typeof rawSections === 'object'
+      ? Object.entries(rawSections).map(([type, content]) => ({
+          type,
+          title: sectionTitle(type),
+          content,
+        }))
+      : []
+
+  if (sections.length === 0 && !thinking) return null
+
   return (
-    <Card
-      size="small"
-      type="inner"
-      title={
-        <span>
-          <FileTextOutlined /> 论文章节
-        </span>
-      }
-      style={{ marginBottom: 8 }}
-    >
-      <List
-        size="small"
-        dataSource={sections}
-        renderItem={(s) => (
-          <List.Item>
+    <>
+      {/* DeepSeek 思考过程 */}
+      {thinking && (thinking.guide || thinking.reasoning) && (
+        <Card
+          size="small"
+          type="inner"
+          style={{ marginBottom: 8, borderColor: '#d4a017', borderWidth: 1 }}
+          title={
             <Space>
-              <Tag color="blue">{s.type}</Tag>
-              <Text>{s.title}</Text>
+              <BulbOutlined style={{ color: '#d4a017' }} />
+              <span>DeepSeek 深度思考</span>
+              {thinking.hasReasoning && (
+                <Tag color="orange" style={{ fontSize: 11 }}>
+                  reasoning
+                </Tag>
+              )}
             </Space>
-          </List.Item>
-        )}
-      />
-    </Card>
+          }
+        >
+          <Collapse
+            ghost
+            defaultActiveKey={['guide']}
+            items={[
+              // 结构化写作指导
+              ...(thinking.guide
+                ? [
+                    {
+                      key: 'guide',
+                      label: (
+                        <Space>
+                          <ThunderboltOutlined style={{ color: '#2563eb' }} />
+                          <Text strong>写作架构师指导</Text>
+                          <Text type="secondary" style={{ fontSize: 12 }}>
+                            ({thinking.guide.length} 字符)
+                          </Text>
+                        </Space>
+                      ),
+                      children: (
+                        <div
+                          style={{
+                            whiteSpace: 'pre-wrap',
+                            wordBreak: 'break-word',
+                            maxHeight: 400,
+                            overflowY: 'auto',
+                            padding: '8px 12px',
+                            background: '#fafafa',
+                            borderRadius: 6,
+                            fontSize: 13,
+                            lineHeight: 1.8,
+                          }}
+                        >
+                          {thinking.guide}
+                        </div>
+                      ),
+                    },
+                  ]
+                : []),
+              // 原始思考链（reasoning_content）
+              ...(thinking.reasoning
+                ? [
+                    {
+                      key: 'reasoning',
+                      label: (
+                        <Space>
+                          <RobotOutlined style={{ color: '#7c3aed' }} />
+                          <Text strong>思考链（Chain-of-Thought）</Text>
+                          <Text type="secondary" style={{ fontSize: 12 }}>
+                            ({thinking.reasoning.length} 字符)
+                          </Text>
+                        </Space>
+                      ),
+                      children: (
+                        <div
+                          style={{
+                            whiteSpace: 'pre-wrap',
+                            wordBreak: 'break-word',
+                            maxHeight: 500,
+                            overflowY: 'auto',
+                            padding: '8px 12px',
+                            background: '#f5f3ff',
+                            borderRadius: 6,
+                            fontSize: 13,
+                            lineHeight: 1.8,
+                            borderLeft: '3px solid #7c3aed',
+                          }}
+                        >
+                          {thinking.reasoning}
+                        </div>
+                      ),
+                    },
+                  ]
+                : []),
+            ].filter(Boolean)}
+          />
+        </Card>
+      )}
+
+      {/* 论文章节列表 */}
+      {sections.length > 0 && (
+        <Card
+          size="small"
+          type="inner"
+          title={
+            <span>
+              <FileTextOutlined /> 论文章节
+            </span>
+          }
+          style={{ marginBottom: 8 }}
+        >
+          <List
+            size="small"
+            dataSource={sections}
+            renderItem={(s) => (
+              <List.Item>
+                <Space>
+                  <Tag color="blue">{s.type}</Tag>
+                  <Text>{s.title}</Text>
+                </Space>
+              </List.Item>
+            )}
+          />
+        </Card>
+      )}
+    </>
   )
+}
+
+const sectionTitle = (type: string): string => {
+  const map: Record<string, string> = {
+    abstract: '摘要',
+    introduction: '引言',
+    method: '方法',
+    results: '结果',
+    discussion: '讨论',
+    conclusion: '结论',
+  }
+  return map[type] ?? type
 }
 
 const FigureHighlight: React.FC<{ artifacts: Project['artifacts'] }> = ({ artifacts }) => {

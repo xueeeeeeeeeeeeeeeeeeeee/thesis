@@ -12,14 +12,14 @@ describe('services/draftRenderer', () => {
   describe('listTemplates', () => {
     it('返回全部支持的模板列表', () => {
       // 验证白名单完整且顺序正确
-      expect(listTemplates()).toEqual(['ctex', 'ieee', 'journal', 'markdown']);
+      expect(listTemplates()).toEqual(['ctex', 'ieee', 'journal', 'markdown', 'docx']);
     });
 
     it('返回数组副本（修改不影响内部白名单）', () => {
       // 防御性测试：返回值不应是内部引用
       const list = listTemplates();
       list.push('markdown' as never);
-      expect(listTemplates()).toEqual(['ctex', 'ieee', 'journal', 'markdown']);
+      expect(listTemplates()).toEqual(['ctex', 'ieee', 'journal', 'markdown', 'docx']);
     });
   });
 
@@ -143,8 +143,9 @@ describe('services/draftRenderer', () => {
       const result = renderDraft({}, 'markdown', meta);
       expect(result.template).toBe('markdown');
       expect(result.text.length).toBeGreaterThan(0);
-      // 空章节应有占位符
-      expect(result.text).toContain('（待生成）');
+      // 空产物也会生成结构完整的可编辑兜底初稿
+      expect(result.text).toContain('## 摘要');
+      expect(result.text).toContain('## 结论');
     });
 
     it('部分字段缺失不抛错', () => {
@@ -157,18 +158,42 @@ describe('services/draftRenderer', () => {
       expect(result.text).toContain('仅有摘要');
     });
 
-    it('自定义章节 key 不在模板占位符中时不被渲染（实现：仅替换预定义占位符）', () => {
-      // pickSections 会收集自定义 key，但模板只有 <ABSTRACT>/<INTRODUCTION> 等预定义占位符
-      // 因此 'appendix' 内容不会出现在输出中
+    it('NLP 章节按学科标题和顺序渲染', () => {
       const artifacts: ProjectArtifacts = {
         paperSections: {
-          appendix: '附录内容',
           abstract: '摘要',
+          relatedWork: '相关工作正文',
+          method: '模型方法正文',
+          experimentSetup: '实验设置正文',
+          errorAnalysis: '误差分析正文',
         },
       };
-      const result = renderDraft(artifacts, 'markdown', meta);
-      expect(result.text).toContain('摘要'); // 预定义 abstract 被渲染
-      expect(result.text).not.toContain('附录内容'); // 自定义 appendix 无占位符，不渲染
+      const result = renderDraft(artifacts, 'markdown', { ...meta, discipline: 'NLP' });
+      expect(result.text).toContain('## 相关工作');
+      expect(result.text).toContain('相关工作正文');
+      expect(result.text).toContain('## 实验设置');
+      expect(result.text).toContain('## 消融与误差分析');
+      expect(result.text).not.toContain('## 材料与方法');
+    });
+
+    it('材料社会影响题目渲染社会影响与治理章节', () => {
+      const result = renderDraft(
+        {
+          paperSections: {
+            abstract: '摘要',
+            conceptualFramework: '框架正文',
+            socialImpact: '影响正文',
+            governance: '治理正文',
+          },
+        },
+        'markdown',
+        { projectName: '新材料与社会', discipline: 'Material', question: '新材料对人类社会的影响' },
+      );
+
+      expect(result.text).toContain('## 概念框架与研究范围');
+      expect(result.text).toContain('## 社会影响分析');
+      expect(result.text).toContain('## 风险、伦理与治理');
+      expect(result.text).not.toContain('## 实验材料与制备方法');
     });
 
     it('figures 元素非对象时使用默认标题', () => {

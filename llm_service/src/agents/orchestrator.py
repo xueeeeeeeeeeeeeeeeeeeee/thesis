@@ -17,6 +17,7 @@ artifacts 容器：所有阶段产物会同步写入 state["artifacts"]，便于
 
 from __future__ import annotations
 
+import asyncio
 import uuid
 from typing import Any, Optional
 
@@ -183,6 +184,7 @@ class Orchestrator:
         discipline: str,
         mode: str,
         template: str,
+        word_limit: int,
         start_stage: Optional[Stage],
     ) -> AgentState:
         return {
@@ -191,6 +193,7 @@ class Orchestrator:
             "discipline": discipline,
             "mode": mode,
             "template": template,
+            "word_limit": word_limit,
             "stage": start_stage or Stage.LITERATURE,
             "literature": [],
             "experiment_design": {},
@@ -220,8 +223,12 @@ class Orchestrator:
         start_stage: Optional[Stage] = None,
         mode: str = "auto",
         template: str = "markdown",
+        word_limit: int = 3000,
     ) -> str:
         """启动 Agent 流程，运行至第一个 HIL 中断点或结束。
+
+        立即创建 agent 元信息并返回 agent_id，graph 在后台异步执行。
+        前端可通过 GET /agents/{id}/status 轮询实时状态（running→interrupted→...）。
 
         mode='auto' 时遇到 HIL 中断点会自动 confirm 继续推进；
         mode='manual' 时遇到 HIL 中断点会暂停，等待 /interrupt 接口恢复。
@@ -234,7 +241,7 @@ class Orchestrator:
             logger.warning("未识别的 mode=%s，回退到 'auto'", mode)
             mode = "auto"
         template = (template or "markdown").lower()
-        if template not in ("ctex", "ieee", "journal", "markdown"):
+        if template not in ("ctex", "ieee", "journal", "markdown", "docx"):
             logger.warning("未识别的 template=%s，回退到 'markdown'", template)
             template = "markdown"
 
@@ -244,6 +251,7 @@ class Orchestrator:
             "discipline": discipline,
             "mode": mode,
             "template": template,
+            "word_limit": word_limit,
             "status": AgentStatusEnum.RUNNING,
             "hil_pending": None,
             "hil_queue": [],
@@ -258,22 +266,25 @@ class Orchestrator:
             )
 
         initial = self._initial_state(
-            agent_id, project_id, question, discipline, mode, template, start_stage
+            agent_id, project_id, question, discipline, mode, template, word_limit, start_stage
         )
         config = self._config(agent_id)
 
-        try:
-            await self._graph.ainvoke(initial, config=config)
-        except Exception as e:  # noqa: BLE001
-            logger.exception("Agent 运行失败：%s", e)
-            self._agents[agent_id]["status"] = AgentStatusEnum.ERROR
-            return agent_id
+        # 后台异步执行 graph，立即返回 agent_id
+        # 前端通过轮询 GET /agents/{id}/status 获取实时进度
+        async def _run_background():
+            try:
+                await self._graph.ainvoke(initial, config=config)
+                # auto 模式：自动穿越所有 HIL 中断点（一次性推完）
+                if mode == "auto":
+                    await self._auto_pass_hil(agent_id)
+                self._refresh_status(agent_id)
+            except Exception as e:  # noqa: BLE001
+                logger.exception("Agent 运行失败：%s", e)
+                self._agents[agent_id]["status"] = AgentStatusEnum.ERROR
 
-        # auto 模式：自动穿越所有 HIL 中断点（一次性推完）
-        if mode == "auto":
-            await self._auto_pass_hil(agent_id)
-
-        self._refresh_status(agent_id)
+        asyncio.create_task(_run_background())
+        logger.info("Agent 已启动（agent_id=%s），graph 后台执行中", agent_id)
         return agent_id
 
     async def _auto_pass_hil(self, agent_id: str) -> None:
@@ -303,7 +314,12 @@ class Orchestrator:
         action: HILAction,
         payload: Optional[dict[str, Any]] = None,
     ) -> AgentStatus:
-        """响应人审中断。"""
+        """响应人审中断（非阻塞）。
+
+        ABORT 立即返回；EDIT/ROLLBACK 同步更新 state 后立即返回，
+        graph 恢复执行放入后台任务，避免阻塞 API（design→experiment 等阶段
+        执行可能耗时 30-60s）。前端通过轮询 GET /agents/{id}/status 获取进度。
+        """
         if agent_id not in self._agents:
             raise KeyError(f"agent 不存在：{agent_id}")
 
@@ -334,21 +350,24 @@ class Orchestrator:
             else:
                 logger.info("无可回滚的版本快照，直接恢复执行")
 
-        # 恢复执行
+        # 标记为运行中并清空 hil_pending，立即返回
         meta["status"] = AgentStatusEnum.RUNNING
         meta["hil_pending"] = None
-        try:
-            await self._graph.ainvoke(None, config=config)
-        except Exception as e:  # noqa: BLE001
-            logger.exception("Agent 恢复运行失败：%s", e)
-            meta["status"] = AgentStatusEnum.ERROR
-            return self.get_status(agent_id)
 
-        # auto 模式：可能还有后续 HIL 中断点，继续自动通过
-        if meta.get("mode") == "auto":
-            await self._auto_pass_hil(agent_id)
+        # 后台异步恢复执行 graph，立即返回当前状态
+        async def _resume_background():
+            try:
+                await self._graph.ainvoke(None, config=config)
+                # auto 模式：可能还有后续 HIL 中断点，继续自动通过
+                if meta.get("mode") == "auto":
+                    await self._auto_pass_hil(agent_id)
+                self._refresh_status(agent_id)
+            except Exception as e:  # noqa: BLE001
+                logger.exception("Agent 恢复运行失败：%s", e)
+                meta["status"] = AgentStatusEnum.ERROR
 
-        self._refresh_status(agent_id)
+        asyncio.create_task(_resume_background())
+        logger.info("Agent 恢复执行（agent_id=%s，action=%s），graph 后台执行中", agent_id, action)
         return self.get_status(agent_id)
 
     async def resume(self, agent_id: str) -> AgentStatus:
@@ -433,6 +452,9 @@ class Orchestrator:
 
         # 注入 question 方便模板渲染
         artifacts["question"] = values.get("question", "")
+        artifacts["requirements"] = {
+            "word_limit": values.get("word_limit", 3000),
+        }
         # 顶层核心字段：优先取 values 的真正 list / dict（不是 node 写入时的 wrapper）
         artifacts["literature"] = _unwrap(
             values.get("literature") or artifacts.get("literature"), "literature"
@@ -534,6 +556,7 @@ class Orchestrator:
             discipline=meta["discipline"],
             mode=meta.get("mode", "auto"),
             template=meta.get("template", "markdown"),
+            word_limit=int(values.get("word_limit", meta.get("word_limit", 3000)) or 3000),
             stage=stage_val,
             status=meta["status"],
             literature=values.get("literature", []) or [],

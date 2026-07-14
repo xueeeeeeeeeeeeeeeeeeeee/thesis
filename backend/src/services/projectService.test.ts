@@ -517,4 +517,129 @@ describe('services/projectService', () => {
       expect(project.id).toBe('p1');
     });
   });
+
+  describe('completeDemoPipeline', () => {
+    it('把 idle 项目一次性推进到 submit/completed，并生成完整初稿产物', async () => {
+      mockQuery.mockResolvedValueOnce([
+        makeRow({
+          name: 'Demo 研究',
+          discipline: '计算机科学',
+          question: '如何稳定生成论文初稿',
+          artifacts: JSON.stringify({}),
+        }),
+      ]);
+      mockQuery.mockResolvedValueOnce([{ affectedRows: 1 }]);
+      mockQuery.mockResolvedValueOnce([
+        makeRow({
+          stage: 'submit',
+          status: 'completed',
+          pipeline_status: 'completed',
+          current_step: 'submit',
+          artifacts: JSON.stringify({
+            literature: [{ title: '参考文献 1' }],
+            paperSections: { abstract: '摘要', method: '方法', conclusion: '结论' },
+            draftText: '# Demo 研究\n\n## 摘要\n摘要',
+            figures: [{ title: '图 1', caption: '流程图' }],
+          }),
+        }),
+      ]);
+
+      const project = await projectService.completeDemoPipeline('p1');
+
+      expect(project.stage).toBe('submit');
+      expect(project.status).toBe('completed');
+      expect(project.pipelineStatus).toBe('completed');
+      expect(project.currentStep).toBe('submit');
+      expect(project.artifacts?.draftText).toContain('## 摘要');
+      expect(project.artifacts?.paperSections).toMatchObject({
+        abstract: expect.any(String),
+        method: expect.any(String),
+        conclusion: expect.any(String),
+      });
+
+      const updateCall = mockQuery.mock.calls[1];
+      const params = updateCall[1] as unknown[];
+      expect(params[0]).toBe('submit');
+      expect(params[1]).toBe('completed');
+      expect(params[2]).toBe('completed');
+      expect(params[3]).toBe('submit');
+      const savedArtifacts = JSON.parse(params[4] as string);
+      expect(savedArtifacts.literature).toHaveLength(3);
+      expect(savedArtifacts.design.method).toContain('研究问题分解');
+      expect(savedArtifacts.experiment.metrics).toHaveLength(3);
+      expect(savedArtifacts.evaluation.conclusion).toContain('专业初稿');
+      expect(savedArtifacts.evaluation.conclusion).toContain('模拟数据');
+      expect(savedArtifacts.draftText).toContain('## 研究方法');
+      expect(savedArtifacts.draftText).toContain('## 结论');
+      await new Promise((r) => setImmediate(r));
+      expect(mockBroadcast).toHaveBeenCalled();
+    });
+
+    it.each([
+      ['NLP', 'F1', '数据集', '误差分析'],
+      ['Material', '物相', '制备', '结构性能'],
+      ['Physics', '不确定度', '边界条件', '收敛'],
+    ])(
+      '%s 项目生成与该学科匹配的实验指标、方法和图表',
+      async (discipline, metricTerm, methodTerm, figureTerm) => {
+        mockQuery.mockResolvedValueOnce([
+          makeRow({
+            name: `${discipline} Demo`,
+            discipline,
+            question: `${discipline} 专业研究问题`,
+            artifacts: JSON.stringify({ requirements: { wordLimit: 1600 } }),
+          }),
+        ]);
+        mockQuery.mockResolvedValueOnce([{ affectedRows: 1 }]);
+        mockQuery.mockResolvedValueOnce([
+          makeRow({
+            stage: 'submit',
+            status: 'completed',
+            pipeline_status: 'completed',
+            current_step: 'submit',
+            artifacts: JSON.stringify({}),
+          }),
+        ]);
+
+        await projectService.completeDemoPipeline('p1');
+
+        const updateCall = mockQuery.mock.calls[1];
+        const params = updateCall[1] as unknown[];
+        const savedArtifacts = JSON.parse(params[4] as string);
+        expect(JSON.stringify(savedArtifacts.experiment.metrics)).toContain(metricTerm);
+        expect(JSON.stringify(savedArtifacts.design)).toContain(methodTerm);
+        expect(JSON.stringify(savedArtifacts.figures)).toContain(figureTerm);
+        expect(savedArtifacts.writingPlan.disciplineProfile).toBe(
+          discipline === 'Material' ? 'material' : discipline.toLowerCase(),
+        );
+      },
+    );
+
+    it('材料社会影响题目生成综述评价型方案而不是实验表征方案', async () => {
+      mockQuery.mockResolvedValueOnce([
+        makeRow({
+          name: '新材料与社会发展研究',
+          discipline: 'Material',
+          question: '新材料对人类社会的影响',
+          artifacts: JSON.stringify({ requirements: { wordLimit: 3000 } }),
+        }),
+      ]);
+      mockQuery.mockResolvedValueOnce([{ affectedRows: 1 }]);
+      mockQuery.mockResolvedValueOnce([makeRow({ artifacts: JSON.stringify({}) })]);
+
+      await projectService.completeDemoPipeline('p1');
+
+      const updateCall = mockQuery.mock.calls[1];
+      const savedArtifacts = JSON.parse((updateCall[1] as unknown[])[4] as string);
+      const designAndExperiment = JSON.stringify({
+        design: savedArtifacts.design,
+        experiment: savedArtifacts.experiment,
+      });
+      expect(designAndExperiment).toContain('利益相关方');
+      expect(designAndExperiment).toContain('案例比较');
+      expect(designAndExperiment).not.toMatch(/XRD|SEM\/TEM|炉温程序|热处理/);
+      expect(savedArtifacts.paperSections).toHaveProperty('socialImpact');
+      expect(savedArtifacts.paperSections).toHaveProperty('governance');
+    });
+  });
 });

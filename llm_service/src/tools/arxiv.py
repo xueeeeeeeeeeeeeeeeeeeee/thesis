@@ -24,7 +24,7 @@ async def search(query: str, limit: int = 10) -> list[dict[str, Any]]:
     if not query:
         return []
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
             resp = await client.get(
                 settings.arxiv_base_url,
                 params={

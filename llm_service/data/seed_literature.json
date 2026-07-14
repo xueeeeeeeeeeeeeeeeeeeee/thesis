@@ -1,0 +1,911 @@
+[
+  {
+    "title": "Novel high efficiency quadruple junction solar cell with current matching and quantum efficiency simulations",
+    "abstract": "A high theoretical efficiency of 47.2% was achieved by a novel combination of In0.51Ga0.49P, GaAs, In0.24Ga0.76As and In0.19Ga0.81Sb subcell layers in a simulated quadruple junction solar cell under 1 sun concentration. The electronic bandgap of these materials are 1.9 eV, 1.42 eV, 1.08 eV and 0.55 eV respectively. This unique arrangement enables the cell absorb photons from ultraviolet to deep infrared wavelengths of the sunlight. Emitter and base thicknesses of the subcells and doping levels of the materials were optimized to maintain the same current in all the four junctions and to obtain the highest conversion efficiency. The short-circuit current density, open circuit voltage and fill factor of the solar cell are 14.7 mA/cm2, 3.38 V and 0.96 respectively. In our design, we considered 1 sun, AM 1.5 global solar spectrum.",
+    "authors": [
+      "Mohammad Jobayer Hossain",
+      "Bibek Tiwari",
+      "Indranil Bhattacharya"
+    ],
+    "year": 2019,
+    "doi": "10.1016/j.solener.2016.09.031",
+    "url": "http://arxiv.org/abs/1905.08024v1",
+    "source": "rag"
+  },
+  {
+    "title": "Dynamic electrical behavior of halide perovskite based solar cells",
+    "abstract": "A dynamic electrical model is introduced to investigate the hysteretic effects in the I-V characteristics of perovskite based solar cells. By making a simple ansatz for the polarization relaxation, our model is able to reproduce qualitatively and quantitatively detailed features of measured I-V characteristics. Pre-poling effects are discussed, pointing out the differences between initially over- and under-polarized samples. In particular, the presence of the current over-shoot observed in the reverse characteristics is correlated with the solar cell pre-conditioning. Furthermore, the dynamic hysteresis is analyzed with respect to changing the bias scan rate, the obtained results being consistent with experimentally reported data: the hysteresis amplitude is maximum at intermediate scan rates, while at very slow and very fast ones it becomes negligible. The effects induced by different relaxation time scales are assessed. The proposed dynamic electrical model offers a comprehensive view of the solar cell operation, being a practical tool for future calibration of tentative microscopic descriptions.",
+    "authors": [
+      "George Alexandru Nemnes",
+      "Cristina Besleaga",
+      "Andrei Gabriel Tomulescu",
+      "Ioana Pintilie",
+      "Lucian Pintilie",
+      "Kristinn Torfason",
+      "Andrei Manolescu"
+    ],
+    "year": 2016,
+    "doi": "10.1016/j.solmat.2016.09.012",
+    "url": "http://arxiv.org/abs/1606.00335v2",
+    "source": "rag"
+  },
+  {
+    "title": "CH3NH3PbI3/GeSe bilayer heterojunction solar cell with high performance",
+    "abstract": "Perovskite (CH3NH3PbI3) solar cells have made significant advances recently. In this paper, we propose a bilayer heterojunction solar cell comprised of a perovskite layer combining with a IV-VI group semiconductor layer, which can give a conversion efficiency even higher than the conventional perovskite solar cell. Such a scheme uses a property that the semiconductor layer with a direct band gap can be better in absorption of long wavelength light and is complementary to the perovskite layer. We studied the semiconducting layers such as GeSe, SnSe, GeS, and SnS, respectively, and found that GeSe is the best, where the optical absorption efficiency in the perovskite/GeSe solar cell is dramatically increased. It turns out that the short circuit current density is enhanced 100% and the power conversion efficiency is promoted 42.7% (to a high value of 23.77%) larger than that in a solar cell with only single perovskite layer. The power conversion efficiency can be further promoted so long as the fill factor and open-circuit voltage are improved. This strategy opens a new way on developing the solar cells with high performance and practical applications.",
+    "authors": [
+      "Guo-Jiao Hou",
+      "Dong-Lin Wang",
+      "Roshan Ali",
+      "Yu-Rong Zhou",
+      "Zhen-Gang Zhu",
+      "Gang Su"
+    ],
+    "year": 2017,
+    "doi": null,
+    "url": "http://arxiv.org/abs/1712.01369v1",
+    "source": "rag"
+  },
+  {
+    "title": "SEP environment in the inner heliosphere from Solar Orbiter and Parker Solar Probe",
+    "abstract": "The Sun drives a supersonic wind which inflates a giant plasma bubble in our very local interstellar neighborhood, the heliosphere. It is bathed in an extremely variable background of energetic ions and electrons which originate from a number of sources. Solar energetic particles (SEPs) are accelerated in the vicinity of the Sun, whereas shocks driven by solar disturbances are observed to accelerate energetic storm particles (ESPs). Moreover, a dilute population with a distinct composition forms the anomalous cosmic rays (ACRs) which are of a mixed interstellar-heliospheric origin. Particles are also accelerated at planetary bow shocks. We will present recent observations of energetic particles by Solar Orbiter and Parker Solar Probe, as well as other spacecraft that allow us to study the acceleration and transport of energetic particles at multiple locations in the inner heliosphere.",
+    "authors": [
+      "Robert F. Wimmer-Schweingruber",
+      "Javier Rodriguez-Pacheco",
+      "George C. Ho",
+      "Christina M. Cohen",
+      "Glenn M. Mason",
+      "the Solar Orbiter EPD",
+      "Parker Solar Probe ISIS teams"
+    ],
+    "year": 2024,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2408.02330v1",
+    "source": "rag"
+  },
+  {
+    "title": "Axial vs. Radial Junction Nanowire Solar Cell",
+    "abstract": "Both axial and radial junction nanowire solar cells have their challenges and advantages. However, so far, there is no review that explicitly provides a detailed comparative analysis of both axial and radial junction solar cells. This article reviews some of the recent results on axial and radial junction nanowire solar cells with an attempt to perform a comparative study between the optical and device behavior of these cells. In particular, we start by reviewing different results on how the absorption can be tuned in axial and radial junction solar cells. We also discuss results on some of the critical device concepts that are required to achieve high efficiency in axial and radial junction solar cells. We include a section on new device concepts that can be realized in nanowire structures. Finally, we conclude this review by discussing a few of the standing challenges of nanowire solar cells.",
+    "authors": [
+      "Vidur Raj",
+      "Hark Hoe Tan",
+      "Chennupati Jagadish"
+    ],
+    "year": 2021,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2103.13190v1",
+    "source": "rag"
+  },
+  {
+    "title": "Morescient GAI for Software Engineering (Extended Version)",
+    "abstract": "The ability of Generative AI (GAI) technology to automatically check, synthesize and modify software engineering artifacts promises to revolutionize all aspects of software engineering. Using GAI for software engineering tasks is consequently one of the most rapidly expanding fields of software engineering research, with over a hundred LLM-based code models having been published since 2021. However, the overwhelming majority of existing code models share a major weakness - they are exclusively trained on the syntactic facet of software, significantly lowering their trustworthiness in tasks dependent on software semantics. To address this problem, a new class of \"Morescient\" GAI is needed that is \"aware\" of (i.e., trained on) both the semantic and static facets of software. This, in turn, will require a new generation of software observation platforms capable of generating large quantities of execution observations in a structured and readily analyzable way. In this paper, we present a vision and roadmap for how such \"Morescient\" GAI models can be engineered, evolved and disseminated according to the principles of open science.",
+    "authors": [
+      "Marcus Kessel",
+      "Colin Atkinson"
+    ],
+    "year": 2024,
+    "doi": "10.1145/3709354",
+    "url": "http://arxiv.org/abs/2406.04710v2",
+    "source": "rag"
+  },
+  {
+    "title": "Web Engineering",
+    "abstract": "Web Engineering is the application of systematic, disciplined and quantifiable approaches to development, operation, and maintenance of Web-based applications. It is both a pro-active approach and a growing collection of theoretical and empirical research in Web application development. This paper gives an overview of Web Engineering by addressing the questions: a) why is it needed? b) what is its domain of operation? c) how does it help and what should it do to improve Web application development? and d) how should it be incorporated in education and training? The paper discusses the significant differences that exist between Web applications and conventional software, the taxonomy of Web applications, the progress made so far and the research issues and experience of creating a specialisation at the master's level. The paper reaches a conclusion that Web Engineering at this stage is a moving target since Web technologies are constantly evolving, making new types of applications possible, which in turn may require innovations in how they are built, deployed and maintained.",
+    "authors": [
+      "Yogesh Deshpande",
+      "San Murugesan",
+      "Athula Ginige",
+      "Steve Hansen",
+      "Daniel Schwabe",
+      "Martin Gaedke",
+      "Bebo White"
+    ],
+    "year": 2003,
+    "doi": null,
+    "url": "http://arxiv.org/abs/cs/0306108v1",
+    "source": "rag"
+  },
+  {
+    "title": "Cognitive Biases in Software Engineering: A Systematic Mapping Study",
+    "abstract": "One source of software project challenges and failures is the systematic errors introduced by human cognitive biases. Although extensively explored in cognitive psychology, investigations concerning cognitive biases have only recently gained popularity in software engineering (SE) research. This paper therefore systematically maps, aggregates and synthesizes the literature on cognitive biases in software engineering to generate a comprehensive body of knowledge, understand state of the art research and provide guidelines for future research and practise. Focusing on bias antecedents, effects and mitigation techniques, we identified 65 articles, which investigate 37 cognitive biases, published between 1990 and 2016. Despite strong and increasing interest, the results reveal a scarcity of research on mitigation techniques and poor theoretical foundations in understanding and interpreting cognitive biases. Although bias-related research has generated many new insights in the software engineering community, specific bias mitigation techniques are still needed for software professionals to overcome the deleterious effects of cognitive biases on their work.",
+    "authors": [
+      "Rahul Mohanani",
+      "Iflaah Salman",
+      "Burak Turhan",
+      "Pilar Rodriguez",
+      "Paul Ralph"
+    ],
+    "year": 2017,
+    "doi": "10.1109/TSE.2018.2877759",
+    "url": "http://arxiv.org/abs/1707.03869v3",
+    "source": "rag"
+  },
+  {
+    "title": "Compositional and Interface Engineering of Hybrid Metal Halide Perovskite Thin Films for Solar Cells",
+    "abstract": "Perovskite solar cells (PSCs) are the fastest-growing photovoltaic (PV) technology in the solar cell community and have reached an efficiency close to that of commercial silicon (Si) solar cells. The organic-inorganic halide perovskite solar cell is an emerging PV technology and grabbed much attention due to its low cost, high efficiency, and ease of fabrication at lower temperatures 100-200 C by solution-processed spin coating or thermal evaporation techniques. Further, we introduce a self-assembled monolayer (SAM) based hole transport layer (HTL) in the p-i-n device architecture PSC. In this work, we used the mixing engineering strategy of SAM with a conjugated polyelectrolyte. We dealt with the hydrophobicity and tailored the work function of the mixed SAM based HTL. Therefore, the HTL/perovskite interface is engineered, and associated device physics is discussed. In addition, we observed the lowest dark current for specific mixed (9:1) HTL, which is a prerequisite in photodetector applications. Therefore, a detailed photodetection analysis is discussed to study the scalable photodetector device. This thesis thoroughly studies perovskite compositional and interface engineering via various optoelectronic measurements. An in-depth device physics is discussed to study the interfacial defects between the charge transport and the perovskite layers. This thesis will be helpful in exploring a new class of perovskite materials and interface modification engineering for fabricating reproducible, stable, and highly efficient hybrid organic-inorganic metal halide perovskite solar cells.",
+    "authors": [
+      "Kashimul Hossain"
+    ],
+    "year": 2024,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2411.17919v1",
+    "source": "rag"
+  },
+  {
+    "title": "Software Engineering for Collective Cyber-Physical Ecosystems",
+    "abstract": "Today's distributed and pervasive computing addresses large-scale cyber-physical ecosystems, characterised by dense and large networks of devices capable of computation, communication and interaction with the environment and people. While most research focusses on treating these systems as \"composites\" (i.e., heterogeneous functional complexes), recent developments in fields such as self-organising systems and swarm robotics have opened up a complementary perspective: treating systems as \"collectives\" (i.e., uniform, collaborative, and self-organising groups of entities). This article explores the motivations, state of the art, and implications of this \"collective computing paradigm\" in software engineering, discusses its peculiar challenges, and outlines a path for future research, touching on aspects such as macroprogramming, collective intelligence, self-adaptive middleware, learning, synthesis, and experimentation of collective behaviour.",
+    "authors": [
+      "Roberto Casadei",
+      "Gianluca Aguzzi",
+      "Giorgio Audrito",
+      "Ferruccio Damiani",
+      "Danilo Pianini",
+      "Giordano Scarso",
+      "Gianluca Torta",
+      "Mirko Viroli"
+    ],
+    "year": 2024,
+    "doi": "10.1145/3712004",
+    "url": "http://arxiv.org/abs/2406.04780v1",
+    "source": "rag"
+  },
+  {
+    "title": "Effect of Ion Migration Induced Electrode Degradation on the Operational Stability of Perovskite Solar Cells",
+    "abstract": "Perovskite-based solar cells are promising due to their rapidly improving efficiencies, but suffer from instability issues. Recently it has been claimed that one of the key contributors to the instability of perovskite solar cells is ion migration induced electrode degradation, which can be avoided by incorporating inorganic hole blocking layers (HBL) in the device architecture. In this work, we investigate the operational environmental stability of methylammonium lead iodide (MAPbI3) perovskite solar cells that contain either an inorganic or organic HBL, with only the former effectively blocking ions from migrating to the metal electrode. This is confirmed by X-ray photoemission spectroscopy measured on electrodes of degraded devices, where only electrodes of devices with an organic HBL show a significant iodine signal. Despite this, we show that when these devices are degraded under realistic operational conditions (i.e. constant illumination in a variety of atmospheric conditions), both types of devices exhibit nearly identical degradation behavior. These results demonstrate that contrary to prior suggestions, ion-induced electrode degradation is not the dominant factor in perovskite environmental instability under operational conditions.",
+    "authors": [
+      "Boris Rivkin",
+      "Paul Fassl",
+      "Qing Sun",
+      "Alexander D. Taylor",
+      "Zhuoying Chen",
+      "Yana Vaynzof"
+    ],
+    "year": 2019,
+    "doi": null,
+    "url": "http://arxiv.org/abs/1904.11731v1",
+    "source": "rag"
+  },
+  {
+    "title": "Unraveling UV Stability in Metal Halide Perovskites: From Degradation Mechanisms to Molecular Passivation",
+    "abstract": "Understanding the mechanisms of UV-induced degradation is crucial for enhancing the UV stability of perovskite solar cells. The UV-driven structural dynamics of CH3NH3PbI3 (MAPbI3) are investigated using real-time TDDFT simulations, revealing that under the electron and hole excitation, the distortion of the inorganic framework (PbI) is primarily driven by the electron occupation of Pb-p and I-p antibonding states, whereas in the hole case, it is mainly governed by the direct cooling induced distortion. We also find that UV accelerates the rotation of MA+ molecules. Further, a BDO molecule is introduced as a passivant, which suppresses structural distortions and provides multi-phonon channels to dissipate carrier cooling energy. Experimental results confirm the UV-protective role of BDO, with suppressed PbI2 formation and improved device stability. These results clarify the mechanism of the UV-induced degradation in the MAPbI3 perovskite and further elucidate how passivation molecules enhance UV stability.",
+    "authors": [
+      "Xin Wen",
+      "Zhiyi Yao",
+      "Wenzhuo Li",
+      "Zhijun Ning",
+      "Fan Zheng"
+    ],
+    "year": 2025,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2511.22136v1",
+    "source": "rag"
+  },
+  {
+    "title": "Deriving a comprehensive dataset of optical constants for metal halide perovskites",
+    "abstract": "Accurate optical constants are essential for modelling light propagation, absorption, and ultimately photovoltaic performance in state of the art perovskite solar cells and is especially important for multiple junction or tandem cells. However, available datasets for metal halide perovskites remain sparse, inconsistent in quality, and often suffer from unphysical sub bandgap extinction caused by surface roughness and limitations of conventional ellipsometry fits. Here, we present a comprehensive library of complex refractive indices (n,k) for a technologically relevant set of FA based lead perovskites, spanning bromide compositions from 0 to 100 percent, and mixed Pb Sn perovskites with Sn fractions from 0 to 60 %. Using state of the art fabrication protocols that yield high quality films, we combine variable angle spectroscopic ellipsometry measurements with highly sensitive sub bandgap probes, including photothermal deflection spectroscopy for neat lead based perovskites and Fourier transform photocurrent spectroscopy for Pb Sn alloys, to reconstruct fully zeroed dielectric functions across and below the band edge. The measured data are then stitched and recalculated via a Kramers Kronig consistent framework, ensuring physically accurate behaviour across the full spectral range. Finally, we introduce a transformation based interpolation scheme that preserves spectral shape and feature alignment, enabling reliable determination of (n,k) for any intermediate composition or band gap. This complete dataset and interpolation protocol provide a standardized foundation for optical modelling of perovskite and tandem solar cells, addressing longstanding data gaps and supporting accurate simulations of next generation photovoltaic architectures.",
+    "authors": [
+      "Akash Dasgupta",
+      "Shuaifeng Hu",
+      "Seongrok Seo",
+      "Qimu Yuan",
+      "Yorrick Boeije",
+      "Michael Johnston",
+      "Sam Stranks",
+      "Henry Snaith"
+    ],
+    "year": 2026,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2601.11793v1",
+    "source": "rag"
+  },
+  {
+    "title": "Degradation Kinetics of Inverted Perovskite Solar Cells",
+    "abstract": "We explore the degradation behaviour under continuous illumination and direct oxygen exposure of inverted unencapsulated formamidinium(FA)0.83Cs0.17Pb(I0.8Br0.2)3, CH3NH3PbI3, and CH3NH3PbI3-xClx perovskite solar cells. We continuously test the devices in-situ and in-operando with current-voltage sweeps, transient photocurrent, and transient photovoltage measurements, and find that degradation in the CH3NH3PbI3-xClx solar cells due to oxygen exposure occurs over shorter timescales than FA0.83Cs0.17Pb(I0.8Br0.2)3 mixed-cation devices. We attribute these oxygen-induced losses in the power conversion efficiencies to the formation of electron traps within the perovskite photoactive layer. Our results highlight that the formamidinium-caesium mixed-cation perovskites are much less sensitive to oxygen-induced degradation than the methylammonium-based perovskite cells, and that further improvements in perovskite solar cell stability should focus on the mitigation of trap generation during ageing.",
+    "authors": [
+      "Mejd Alsari",
+      "Andrew J. Pearson",
+      "Jacob Tse-Wei Wang",
+      "Zhiping Wang",
+      "Augusto Montisci",
+      "Neil C. Greenham",
+      "Henry J. Snaith",
+      "Samuele Lilliu",
+      "Richard H. Friend"
+    ],
+    "year": 2018,
+    "doi": null,
+    "url": "http://arxiv.org/abs/1801.09761v1",
+    "source": "rag"
+  },
+  {
+    "title": "Metal Halide Perovskites for Violet and Ultraviolet Light Emission",
+    "abstract": "Emissive metal halide perovskites (MHPs) have emerged as excellent candidates for next-generation optoelectronics due to their sharp color purity, inexpensive processing, and bandgap tunability. However, the development of violet and ultraviolet light-emitting MHPs has lagged behind due to challenges related to material and device stability, charge carrier transport, tunability into the ultraviolet spectrum, toxicity, and scalability. Here, we review the progress of both violet and ultraviolet MHP nanomaterials and light-emitting diodes, including materials synthesis and device fabrication across various crystal structures and dimensions (e.g., bulk thin films, 2D thin films, nanoplatelets, colloidal nanocrystals, and more) as well as lead-free platforms (e.g., rare-earth metal halide perovskites). By highlighting several pathways to continue the development of violet and ultraviolet light-emitting MHPs while also proposing tactics to overcome their outstanding challenges, we demonstrate the potential of state-of-the-art violet and ultraviolet MHP materials and devices for important applications in public health, 3D printing, nanofabrication, and more.",
+    "authors": [
+      "Sebastian Fernández",
+      "Manchen Hu",
+      "Tyler K. Colenbrander",
+      "Divine Mbachu",
+      "Daniel N. Congreve"
+    ],
+    "year": 2026,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2601.21270v2",
+    "source": "rag"
+  },
+  {
+    "title": "Photovoltaic effect and photopolarization in Pb[(Mg1/3Nb2/3)0.68Ti0.32]O3 crystal",
+    "abstract": "Ferroelectric photovoltaic materials are an alternative to semiconductor-based photovoltaics and offer the advantage of above bandgap photovoltage generation. However, there are few known compounds, and photovoltaic efficiencies remain low. Here, we report the discovery of a photovoltaic effect in undoped lead magnesium niobate-lead titanate crystal and a significant improvement in the photovoltaic response under suitable electric fields and temperatures. The photovoltaic effect is maximum near the electric-field-driven ferroelectric dipole reorientation, and increases threefold near the Curie temperature. Moreover, at ferroelectric saturation, the photovoltaic response exhibits clear remanent and transient effects. The transient-remanent combinations together with electric and thermal tuning possibilities indicate photoferroelectric crystals as emerging elements for photovoltaics and optoelectronics, relevant to all-optical information storage and beyond.",
+    "authors": [
+      "A. S. Makhort",
+      "F. Chevrier",
+      "D. Kundys",
+      "B. Doudin",
+      "B. Kundys"
+    ],
+    "year": 2018,
+    "doi": "10.1103/PhysRevMaterials.2.012401",
+    "url": "http://arxiv.org/abs/1801.04870v1",
+    "source": "rag"
+  },
+  {
+    "title": "Low Frequency Dielectric Loss of Metal/Insulator/Organic Semiconductor Junctions in Ambient Conditions",
+    "abstract": "The complex admittance of metal/oxide/pentacene thin film junctions is investigated under ambient conditions. At low frequencies, a contribution attributed to proton diffusion through the oxide is seen. This diffusion is shown to be anomalous and is believed to be also at the origin of the bias stress effect observed in organic field effect transistors. At higher frequencies, two dipolar contributions are evidenced, attributed to defects located one at the organic/oxide interface or within the organic, and the other in the bulk of the oxide. These two dipolar responses show different dynamic properties that manifest themselves in the admittance in the form of a Debye contribution for the defects located in the oxide, and of a Cole-Cole contribution for the defects related to the organic.",
+    "authors": [
+      "R. Ledru",
+      "S. Pleutin",
+      "B. Grouiez",
+      "D. Zander",
+      "H. Bejbouji",
+      "K. Lmimouni",
+      "D. Vuillaume"
+    ],
+    "year": 2012,
+    "doi": "10.1016/j.orgel.2012.04.035",
+    "url": "http://arxiv.org/abs/1204.6406v1",
+    "source": "rag"
+  },
+  {
+    "title": "The transient localization scenario for charge transport in crystalline organic materials",
+    "abstract": "Charge transport in crystalline organic semiconductors is intrinsically limited by the presence of large thermal molecular motions, which are a direct consequence of the weak van der Waals inter-molecular interactions. These lead to an original regime of transport called \\textit{transient localization}, sharing features of both localized and itinerant electron systems. After a brief review of experimental observations that pose a challenge to the theory, we concentrate on a commonly studied model which describes the interaction of the charge carriers with inter-molecular vibrations. We present different theoretical approaches that have been applied to the problem in the past, and then turn to more modern approaches that are able to capture the key microscopic phenomenon at the origin of the puzzling experimental observations, i.e. the quantum localization of the electronic wavefuntion at timescales shorter than the typical molecular motions. We describe in particular a relaxation time approximation which clarifies how the transient localization due to dynamical molecular motions relates to the Anderson localization realized for static disorder, and allows us to devise strategies to improve the mobility of actual compounds. The relevance of the transient localization scenario to other classes of systems is briefly discussed.",
+    "authors": [
+      "S. Fratini",
+      "D. Mayou",
+      "S. Ciuchi"
+    ],
+    "year": 2015,
+    "doi": "10.1002/adfm.201502386",
+    "url": "http://arxiv.org/abs/1505.02686v2",
+    "source": "rag"
+  },
+  {
+    "title": "Crossover between bulk and interface photovoltaic mechanisms in ferroelectric vertical heterostructure",
+    "abstract": "Bulk photovoltaic (BPVE) effect in crystals lacking inversion symmetry offers great potential for optoelectronic applications due to its unique properties such as above bandgap photovoltage and switchable photocurrent. Because of their large spontaneous polarizations, ferroelectric materials are ideal platforms for studying BPVE. However, identifying the origin of experimentally observed photovoltaic response is often challenging due to the entanglement between bulk and interface effects, leading to much debate in the field. This issue is particularly pronounced in vertical heterostructures, where the two effects are comparable. Here we report a crossover between bulk- and interface-dominant response in vertical BiFeO3 heterostructures when changing the photon energy. We show that well above-bandgap excitation leads to bulk photovoltaic response, but band-edge excitation requires interface band bending to separate the photocarriers. Our findings not only help to clarify contradicting reports in the literature, but also lay the ground for a deeper understanding of ferroelectric photovoltaic effect and its applications in various devices.",
+    "authors": [
+      "Amr Abdelsamie",
+      "Lu You",
+      "Le Wang",
+      "Shuzhou Li",
+      "Mingqiang Gu",
+      "Junling Wang"
+    ],
+    "year": 2021,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2110.13597v1",
+    "source": "rag"
+  },
+  {
+    "title": "Tuning photovoltaic response in Bi2FeCrO6 films by ferroelectric poling",
+    "abstract": "Ferroelectric materials are interesting candidates for future photovoltaic applications due to their potential to overcome the fundamental limits of conventional single bandgap semiconductor-based solar cells. Although a more efficient charge separation and above bandgap photovoltages are advantageous in these materials, tailoring their photovoltaic response using ferroelectric functionalities remains puzzling. Here we address this issue by reporting a clear hysteretic character of the photovoltaic effect as a function of electric field and its dependence on the poling history. Furthermore, we obtain insight into light induced nonequilibrium charge carrier dynamics in Bi2FeCrO6 films involving not only charge generation, but also recombination processes. At the ferroelectric remanence, light is able to electrically depolarize the films with remanent and transient effects as evidenced by electrical and piezoresponse force microscopy (PFM) measurements. The hysteretic nature of the photovoltaic response and its nonlinear character at larger light intensities can be used to optimize the photovoltaic performance of future ferro-electric-based solar cells.",
+    "authors": [
+      "A. Quattropani",
+      "A. S. Makhort",
+      "M. V. Rastei",
+      "G. Versini",
+      "G. Schmerber",
+      "S. Barre",
+      "A. Dinia",
+      "A. Slaoui",
+      "J. -L. Rehspringer",
+      "T. Fix",
+      "S. Colis",
+      "B. Kundys"
+    ],
+    "year": 2018,
+    "doi": "10.1039/c8nr03137a",
+    "url": "http://arxiv.org/abs/1808.05847v1",
+    "source": "rag"
+  },
+  {
+    "title": "Comprehensive Analysis of Thermal Dissipation in Lithium-Ion Battery Packs",
+    "abstract": "Effective thermal management is critical for lithium-ion battery packs' safe and efficient operations, particularly in applications such as drones, where compact designs and varying airflow conditions present unique challenges. This study investigates the thermal performance of a 16-cell lithium-ion battery pack by optimizing cooling airflow configurations and integrating phase change materials (PCMs) for enhanced heat dissipation. Seven geometric configurations were evaluated under airflow speeds ranging from 0 to 15 m/s, reflecting the operational conditions of civilian drones. A comprehensive 3D simulation approach was used to analyze the effects of inlet and outlet configurations, airflow dynamics, and PCM phase transition behavior. Results indicate that the trapezoidal (wide-base) configuration, paired with a 5-inlet and 1-outlet setup, achieves the most balanced performance, effectively maintaining optimal operating temperatures across low and high-speed airflow conditions. PCM integration further stabilized thermal behavior, with phase change durations extending to 12.5 min under tested conditions. These findings highlight the importance of geometric optimization and material integration in advancing compact and reliable thermal management systems for energy-dense battery packs. This study provides a foundation for designing efficient cooling strategies tailored to lightweight applications such as drones and portable energy storage systems.",
+    "authors": [
+      "Xuguang Zhang",
+      "Hexiang Zhang",
+      "Amjad Almansour",
+      "Mrityunjay Singh",
+      "Hengling Zhu",
+      "Michael C. Halbig",
+      "Yi Zheng"
+    ],
+    "year": 2025,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2502.07070v1",
+    "source": "rag"
+  },
+  {
+    "title": "Cathode Materials for Lithium Ion Batteries (LIBs): A Review on Materials related aspects towards High Energy Density LIBs",
+    "abstract": "This article reviews the development of cathode materials for secondary lithium ion batteries since its inception with the introduction of lithium cobalt oxide in early 1980s. The time has passed and numerous cathode materials are designed and developed to realize not only the enhanced capacity but also the power density simultaneously. However, there are numerous challenges such as the cyclic stability of cathode materials, their structural and thermal stability, higher operating voltage together with high ionic and electronic conductivity for efficient ion and charge transport during charging and discharging. This article will cover the development of materials in chronological order classifying as the lithium ion cathode materials in different generations. The ternary oxides such as LiTMOx (TM=Transition Metal) are considered as the first generation materials, whereas modified ternary and quaternary oxide systems are considered as the second generation materials. The current i.e. third generation includes complex oxide systems with higher lithium content such as Li2TMSiO4 aiming for higher energy density. Further, developments are heading towards lithium metal based batteries with a possibility for very high energy densities.",
+    "authors": [
+      "Ambesh Dixit"
+    ],
+    "year": 2020,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2008.10896v2",
+    "source": "rag"
+  },
+  {
+    "title": "Oxygen redox in battery cathodes: A brief overview",
+    "abstract": "The participation of oxygen or other anionic species in redox activities in cathode materials for lithium and sodium-ion battery systems is known to play a role in governing the useful capacity of these batteries. Directly probing anionic redox mechanisms is not possible, rather the computational analysis by density functional theory poses the main approach towards gleaning insights into anionic redox activity and harnessing these effects to maximize capacity in future electrode materials. Here we showcase material systems exhibiting this mechanism of ion insertion and removal, and present the key computational considerations in studying anionic redox activities in battery materials. Aided by new computationally derived understandings of the role of anionic redox in emerging battery materials, increasingly greater levels of useable capacities can be extracted through informed materials design.",
+    "authors": [
+      "M. Hussein N. Assadi",
+      "Dorian A. H. Hanaor"
+    ],
+    "year": 2024,
+    "doi": "10.1007/978-3-031-47303-6_15",
+    "url": "http://arxiv.org/abs/2408.09942v1",
+    "source": "rag"
+  },
+  {
+    "title": "Crystal Systems Classification of Phosphate-Based Cathode Materials Using Machine Learning for Lithium-Ion Battery",
+    "abstract": "The physical and chemical characteristics of cathodes used in batteries are derived from the lithium-ion phosphate cathodes crystalline arrangement, which is pivotal to the overall battery performance. Therefore, the correct prediction of the crystal system is essential to estimate the properties of cathodes. This study applies machine learning classification algorithms for predicting the crystal systems, namely monoclinic, orthorhombic, and triclinic, related to Li P (Mn, Fe, Co, Ni, V) O based Phosphate cathodes. The data used in this work is extracted from the Materials Project. Feature evaluation showed that cathode properties depend on the crystal structure, and optimized classification strategies lead to better predictability. Ensemble machine learning algorithms such as Random Forest, Extremely Randomized Trees, and Gradient Boosting Machines have demonstrated the best predictive capabilities for crystal systems in the Monte Carlo cross-validation test. Additionally, sequential forward selection (SFS) is performed to identify the most critical features influencing the prediction accuracy for different machine learning models, with Volume, Band gap, and Sites as input features ensemble machine learning algorithms such as Random Forest (80.69%), Extremely Randomized Tree (78.96%), and Gradient Boosting Machine (80.40%) approaches lead to the maximum accuracy towards crystallographic classification with stability and the predicted materials can be the potential cathode materials for lithium ion batteries.",
+    "authors": [
+      "Yogesh Yadav",
+      "Sandeep K Yadav",
+      "Vivek Vijay",
+      "Ambesh Dixit"
+    ],
+    "year": 2025,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2509.10532v1",
+    "source": "rag"
+  },
+  {
+    "title": "Tailoring of Grain Boundary Structure and Chemistry of Cathode Particles for Enhanced Cycle Stability of Lithium Ion Battery",
+    "abstract": "The biggest challenge for the commercialization of layered structured nickel rich lithium transition metal oxide cathode is the capacity and voltage fading. Resolving this problem over the years follows an incremental progress. In this work, we report our finding of totally a new approach to revolutionize the cycle stability of aggregated cathode particles for lithium ion battery at both room and elevated temperatures. We discover that infusion of a solid electrolyte into the grain boundaries of the cathode secondary particles can dramatically enhance the capacity retention and voltage stability of the battery. We find that the solid electrolyte infused in the boundaries not only acts as a fast channel for Li ion transport, but also most importantly prevents penetration of the liquid electrolyte into the boundaries, consequently eliminating the detrimental factors that include solid-liquid interfacial reaction, intergranular cracking, and layer to spinel phase transformation. The present work, for the first time, reveals unprecedented insight as how the cathode behaves in the case of not contacting with the liquid electrolyte, ultimately points toward a general new route, via grain boundary engineering, for designing of better batteries of both solid-liquid and solid state systems.",
+    "authors": [
+      "Pengfei Yan",
+      "Jianming Zheng",
+      "Jian Liu",
+      "Biqiong Wang",
+      "Xueliang Sun",
+      "Chongmin Wang",
+      "Ji-Guang Zhang"
+    ],
+    "year": 2017,
+    "doi": null,
+    "url": "http://arxiv.org/abs/1710.06050v1",
+    "source": "rag"
+  },
+  {
+    "title": "Introduction to High-Temperature Superconductivity for Solid State Chemists",
+    "abstract": "Superconductivity is one of the most amazing properties that metallic conductors exhibit. Electrical resistance is completely eliminated below the critical temperature (Tc), which is the most important parameter in superconductivity. Since the discovery of copper oxide superconductors 39 years ago, many solid state chemists have made significant contributions to the field by discovering new compounds and producing high-quality samples for physical measurements. However, superconductivity research remains challenging for most solid state chemists because it requires knowledge of complicated solid state physics. This manuscript aims to provide a simple, intuitive introduction to superconductivity using only fundamental physics concepts that solid state chemists are familiar with. The author investigates a wide range of materials and classifies them according to the superconductivity mechanisms that may drive them. Specifically focusing on a series of copper oxide superconductors with the highest Tc at ambient conditions, the remarkable material dependence of Tc and the underlying, unconventional superconductivity mechanism that leads to the high Tc are thoroughly examined. Although our understanding of cuprate superconductivity is still fragmented, the author believes that once the branches and leaves are removed, the story will be fairly simple, similar to the phonon-based superconductivity mechanism revealed by the BCS theory. Furthermore, potential strategies for raising the Tc of cuprates and other superconductors are discussed. The author hopes that this article will pique interest in superconductors in young solid state chemists and encourage them to pursue the discovery of still unknown and unexplored room-temperature superconductors in the future.",
+    "authors": [
+      "Zenji Hiroi"
+    ],
+    "year": 2026,
+    "doi": "10.1016/j.progsolidstchem.2026.100574",
+    "url": "http://arxiv.org/abs/2602.12608v2",
+    "source": "rag"
+  },
+  {
+    "title": "A four parameter model for the solid-electrolyte interphase to predict battery aging during operation",
+    "abstract": "Accurately predicting aging of lithium-ion batteries would help to prolong their lifespan, but remains a challenge owing to the complexity and interrelation of different aging mechanisms. As a result, aging prediction often relies on empirical or data-driven approaches, which obtain their performance from analyzing large datasets. However, these datasets are expensive to generate and the models are agnostic of the underlying physics and thus difficult to extrapolate to new conditions. In this article, a physical model is used to predict capacity fade caused by solid-electrolyte interphase (SEI) growth in 62 automotive cells, aged with 28 different protocols. Three protocols parametrize the time, current and temperature dependence of the model, the state of charge dependence results from the anode's open circuit voltage curve. The model validation with the remaining 25 protocols shows a high predictivity with a root-mean squared error of $1.28\\%$. A case study with the so-validated model shows that the operating window, i.e. maximum and minimum state of charge, has the largest impact on SEI growth, while the influence of the applied current is almost negligible. Thereby the presented model is a promising approach to better understand, quantify and predict aging of lithium-ion batteries.",
+    "authors": [
+      "Lars von Kolzenberg",
+      "Jochen Stadler",
+      "Johannes Fath",
+      "Madeleine Ecker",
+      "Birger Horstmann",
+      "Arnulf Latz"
+    ],
+    "year": 2021,
+    "doi": "10.1016/j.jpowsour.2022.231560",
+    "url": "http://arxiv.org/abs/2112.13671v2",
+    "source": "rag"
+  },
+  {
+    "title": "Nanoscale Solid State Batteries Enabled By Thermal Atomic Layer Deposition of a Lithium Polyphosphazene Solid State Electrolyte",
+    "abstract": "Several active areas of research in novel energy storage technologies, including three-dimensional solid state batteries and passivation coatings for reactive battery electrode components, require conformal solid state electrolytes. We describe an atomic layer deposition (ALD) process for a member of the lithium phosphorus oxynitride (LiPON) family, which is employed as a thin film lithium-conducting solid electrolyte. The reaction between lithium tert-butoxide (LiO$^t$Bu) and diethyl phosphoramidate (DEPA) produces conformal, ionically conductive thin films with a stoichiometry close to Li$_2$PO$_2$N between 250 and 300$^\\circ$C. The P/N ratio of the films is always 1, indicative of a particular polymorph of LiPON which closely resembles a polyphosphazene. Films grown at 300$^\\circ$C have an ionic conductivity of $6.51\\:(\\pm0.36)\\times10^{-7}$ S/cm at 35$^\\circ$C, and are functionally electrochemically stable in the window from 0 to 5.3V vs. Li/Li$^+$. We demonstrate the viability of the ALD-grown electrolyte by integrating it into full solid state batteries, including thin film devices using LiCoO$_2$ as the cathode and Si as the anode operating at up to 1 mA/cm$^2$. The high quality of the ALD growth process allows pinhole-free deposition even on rough crystalline surfaces, and we demonstrate the fabrication and operation of thin film batteries with the thinnest (<100nm) solid state electrolytes yet reported. Finally, we show an additional application of the moderate-temperature ALD process by demonstrating a flexible solid state battery fabricated on a polymer substrate.",
+    "authors": [
+      "Alexander J. Pearse",
+      "Thomas E. Schmitt",
+      "Elliot J. Fuller",
+      "Farid El-Gabaly",
+      "Chuan-Fu Lin",
+      "Konstantinos Gerasopoulos",
+      "Alexander C. Kozen",
+      "A. Alec Talin",
+      "Gary Rubloff",
+      "Keith E. Gregorcyzck"
+    ],
+    "year": 2017,
+    "doi": "10.1021/acs.chemmater.7b00805",
+    "url": "http://arxiv.org/abs/1702.04009v1",
+    "source": "rag"
+  },
+  {
+    "title": "The relationship between the redox activity and electrochemical stability of solid electrolytes for solid-state batteries",
+    "abstract": "All-solid-state Li-ion batteries promise safer electrochemical energy storage with larger volumetric and gravimetric energy densities. A major concern is the limited electrochemical stability of solid electrolytes and related detrimental electrochemical reactions, especially because of our restricted understanding. Here we demonstrate for the argyrodite, garnet and NASICON type solid electrolytes, that the favourable decomposition pathway is indirect rather than direct, via (de)lithiated states of the solid electrolyte, into the thermodynamically stable decomposition products. The consequence is that the electrochemical stability window of the solid electrolyte is significantly larger than predicted for direct decomposition, rationalizing the observed stability window. The observed argyrodite metastable (de)lithiated solid electrolyte phases contribute to the (ir)reversible cycling capacity of all-solid-state batteries, in addition to the contribution of the decomposition products, comprehensively explaining solid electrolyte redox activity. The fundamental nature of the proposed mechanism suggests this is a key aspect for solid electrolytes in general, guiding interface and material design for all-solid-state batteries.",
+    "authors": [
+      "Tammo Schwietert",
+      "Violetta Arszelewska",
+      "Chuang Yu",
+      "Chao Wang",
+      "Alexandros Vasileiadis",
+      "Niek J. J. de Klerk",
+      "Jart Hageman",
+      "Thomas Hupfer",
+      "Ingo Kerkamm",
+      "Yaolin Xu",
+      "Eveline van der Maas",
+      "Erik M. Kelder",
+      "Swapna Ganapathy",
+      "Marnix Wagemaker"
+    ],
+    "year": 2019,
+    "doi": "10.1038/s41563-019-0576-0",
+    "url": "http://arxiv.org/abs/1908.10144v1",
+    "source": "rag"
+  },
+  {
+    "title": "A two-mechanism and multiscale compatible approach for solid state electrolytes of (Li-ion) batteries",
+    "abstract": "All solid state batteries are claimed to be the next-generation battery system, in view of their safety accompanied by high energy densities. A new advanced, multiscale compatible, and fully three dimensional model for solid electrolytes is presented in this note. The response of the electrolyte is profoundly studied theoretically and numerically, analyzing the equilibrium and steady state behaviors, the limiting factors, as well as the most relevant constitutive parameters according to the sensitivity analysis of the model.",
+    "authors": [
+      "L. Cabras",
+      "D. Danilov",
+      "W. Subber",
+      "V. Oancea",
+      "A. Salvadori"
+    ],
+    "year": 2021,
+    "doi": "10.1016/j.est.2021.103842",
+    "url": "http://arxiv.org/abs/2107.02731v1",
+    "source": "rag"
+  },
+  {
+    "title": "The LDA+DMFT route to identify good thermoelectrics",
+    "abstract": "For technical applications thermoelectric materials with a high figure of merit are desirable, and strongly correlated electron systems are very promising in this respect. Since effects of bandstructure_and_ electronic correlations play an important role for getting large figure of merits, the combination of local density approximation_and_ dynamical mean field theory is an ideal tool for the computational materials design of new thermoelectrics as well as to help us understand the mechanisms leading to large figures of merits in certain materials. This conference proceedings provides for a brief introduction to the method and reviews recent results for LiRh_2O_4.",
+    "authors": [
+      "K. Held",
+      "R. Arita",
+      "V. I. Anisimov",
+      "K. Kuroki"
+    ],
+    "year": 2009,
+    "doi": "10.1007/978-90-481-2892-1_9",
+    "url": "http://arxiv.org/abs/0903.2994v1",
+    "source": "rag"
+  },
+  {
+    "title": "Thermoelectrics Near the Mott Localization-Delocalization Transition",
+    "abstract": "We give an overview on current status of the theoretical research on Thermoelectricity for correlated materials. We derive the theoretical formulas which become exact at low and high temperature and discuss the intermediate temperature results. In particular, we show that within Dynamical Mean Field Theory the low temperature sign of the thermopower is not necessary the same as in LDA, and that significant non-universality is expected due to strong correlations.",
+    "authors": [
+      "Kristjan Haule",
+      "Gabriel Kotliar"
+    ],
+    "year": 2009,
+    "doi": "10.1007/978-90-481-2892-1_7",
+    "url": "http://arxiv.org/abs/0907.0192v1",
+    "source": "rag"
+  },
+  {
+    "title": "The optimum configuration design of a nanostructured thermoelectric device with resonance tunneling",
+    "abstract": "A nanostructured thermoelectric device is designed by connecting a double-barrier resonant tunneling heterostructure to two electron reservoirs. Based on Landauers equation and Fermi-Dirac statistics, the exact solution of the heat flow is calculated. The maximum power output and efficiency are calculated through the optimizations of several key parameters. The optimum characteristic curve of the performance is obtained. The reasonably working region of the device is determined, the selection criteria of main parameters are provided, and the optimum configuration of the device is drawn. Results show that the heterojunction becomes a perfect energy filter by appropriately regulating the chemical potentials of electron reservoirs and optimally choosing the widths of barrier and quantum well and the nanostructured thermoelectric device with resonance tunneling may obtain simultaneously a large power output and a high efficiency.",
+    "authors": [
+      "Tong Fu",
+      "Jianying Du",
+      "Shanhe Su",
+      "Guozhen Su",
+      "Jincan Chen"
+    ],
+    "year": 2021,
+    "doi": "10.1088/1402-4896/ac5e5a",
+    "url": "http://arxiv.org/abs/2112.04686v1",
+    "source": "rag"
+  },
+  {
+    "title": "Performance of Genetic Algorithms in the Context of Software Model Refactoring",
+    "abstract": "Software systems continuously evolve due to new functionalities, requirements, or maintenance activities. In the context of software evolution, software refactoring has gained a strategic relevance. The space of possible software refactoring is usually very large, as it is given by the combinations of different refactoring actions that can produce software system alternatives. Multi-objective algorithms have shown the ability to discover alternatives by pursuing different objectives simultaneously. Performance of such algorithms in the context of software model refactoring is of paramount importance. Therefore, in this paper, we conduct a performance analysis of three genetic algorithms to compare them in terms of performance and quality of solutions. Our results show that there are significant differences in performance among the algorithms (e.g., PESA2 seems to be the fastest one, while NSGA-II shows the least memory usage).",
+    "authors": [
+      "Vittorio Cortellessa",
+      "Daniele Di Pompeo",
+      "Michele Tucci"
+    ],
+    "year": 2023,
+    "doi": "10.1007/978-3-031-43185-2_16",
+    "url": "http://arxiv.org/abs/2308.13875v1",
+    "source": "rag"
+  },
+  {
+    "title": "Large anomalous Nernst effect in non-crystalline Gd-Fe ferrimagnetic alloy films for flexible thermoelectric applications",
+    "abstract": "The anomalous Nernst effect (ANE), a heat-charge conversion mechanism based on a magnetic metal, has been extensively studied for application in thin thermoelectric devices. The low magnetization and fabrication at room temperature are important for flexible ANE thermoelectric devices on plastic substrates. Therefore, we investigated the ANE in ferrimagnetic GdxFe100-x films with low magnetization in this study by systematically varying the Gd composition x. Although the Gd33Fe67 film with a Gd composition close to magnetic compensation composition exhibited very low magnetization, an ANE coefficient |S_ANE| of 2.13 uV/K was obtained, which is close to the highest value reported thus far. Finally, we demonstrated the ANE in a Gd33Fe67 film deposited on a flexible sheet. A sufficient ANE voltage was obtained while maintaining the flexibility of the sample, indicating the potential application of this material in thermoelectric devices exploiting the ANE of Gd-Fe films.",
+    "authors": [
+      "Yuichiro Kurokawa",
+      "Masahiro Fujimoto",
+      "Yuki Hamada",
+      "Hiromi Yuasa"
+    ],
+    "year": 2021,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2107.05215v2",
+    "source": "rag"
+  },
+  {
+    "title": "A comparison of optimisation algorithms for high-dimensional particle and astrophysics applications",
+    "abstract": "Optimisation problems are ubiquitous in particle and astrophysics, and involve locating the optimum of a complicated function of many parameters that may be computationally expensive to evaluate. We describe a number of global optimisation algorithms that are not yet widely used in particle astrophysics, benchmark them against random sampling and existing techniques, and perform a detailed comparison of their performance on a range of test functions. These include four analytic test functions of varying dimensionality, and a realistic example derived from a recent global fit of weak-scale supersymmetry. Although the best algorithm to use depends on the function being investigated, we are able to present general conclusions about the relative merits of random sampling, Differential Evolution, Particle Swarm Optimisation, the Covariance Matrix Adaptation Evolution Strategy, Bayesian Optimisation, Grey Wolf Optimisation, and the PyGMO Artificial Bee Colony, Gaussian Particle Filter and Adaptive Memory Programming for Global Optimisation algorithms.",
+    "authors": [
+      "The DarkMachines High Dimensional Sampling Group",
+      "Csaba Balázs",
+      "Melissa van Beekveld",
+      "Sascha Caron",
+      "Barry M. Dillon",
+      "Ben Farmer",
+      "Andrew Fowlie",
+      "Eduardo C. Garrido-Merchán",
+      "Will Handley",
+      "Luc Hendriks",
+      "Guðlaugur Jóhannesson",
+      "Adam Leinweber",
+      "Judita Mamužić",
+      "Gregory D. Martinez",
+      "Sydney Otten",
+      "Pat Scott",
+      "Roberto Ruiz de Austri",
+      "Zachary Searle",
+      "Bob Stienen",
+      "Joaquin Vanschoren",
+      "Martin White"
+    ],
+    "year": 2021,
+    "doi": "10.1007/JHEP05(2021)108",
+    "url": "http://arxiv.org/abs/2101.04525v2",
+    "source": "rag"
+  },
+  {
+    "title": "On Possibility of Using High-Tc Ceramic-Superconductor as Junction-less Transistor towards Nano-miniaturization",
+    "abstract": "High-Tc Type-II ceramic-superconductor at temperature T < Tc, under presence of magnetic-field B becomes non-superconducting if B exceeds a critical value Bc2. Thus at T < Tc, by application/absence of critical magnetic- field as a controlling device, these non-superconducting/superconductor states can be achieved for current-flow to two corresponding states of block/pass or off/on or 0/1. Thus it appears that there is a possibility of a new breed of transistors purely with high-Tc Type-II ceramic-superconductor; compact and without junctions & complexities. The proposed ceramic-superconductor-transistor (CST) seems in-principle to work well for switching purpose, but its use could also be extended for other electronic/computer devices too. The CST, being junction-less thus diffusion-less, could possibly be packed more closely (at nano-level) than the semi-conductor devices which has a limitation due to diffusion-layer-overlapping. A similar superconductor-device named Cryotron was invented at MIT half-a-century ago, but could not survive against semiconductor. CST is a rebirth of cryotron in different disguise & in new perspective.",
+    "authors": [
+      "R. C. Gupta",
+      "Ruchi Gupta",
+      "Sanjay Gupta"
+    ],
+    "year": 2005,
+    "doi": null,
+    "url": "http://arxiv.org/abs/physics/0507029v1",
+    "source": "rag"
+  },
+  {
+    "title": "MatScIE: An automated tool for the generation of databases of methods and parameters used in the computational materials science literature",
+    "abstract": "The number of published articles in the field of materials science is growing rapidly every year. This comparatively unstructured data source, which contains a large amount of information, has a restriction on its re-usability, as the information needed to carry out further calculations using the data in it must be extracted manually. It is very important to obtain valid and contextually correct information from the online (offline) data, as it can be useful not only to generate inputs for further calculations, but also to incorporate them into a querying framework. Retaining this context as a priority, we have developed an automated tool, MatScIE (Material Scince Information Extractor) that can extract relevant information from material science literature and make a structured database that is much easier to use for material simulations. Specifically, we extract the material details, methods, code, parameters, and structure from the various research articles. Finally, we created a web application where users can upload published articles and view/download the information obtained from this tool and can create their own databases for their personal uses.",
+    "authors": [
+      "Souradip Guha",
+      "Ankan Mullick",
+      "Jatin Agrawal",
+      "Swetarekha Ram",
+      "Samir Ghui",
+      "Seung-Cheol Lee",
+      "Satadeep Bhattacharjee",
+      "Pawan Goyal"
+    ],
+    "year": 2020,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2009.06819v2",
+    "source": "rag"
+  },
+  {
+    "title": "Graphene-based field-effect transistor biosensors for the rapid detection and analysis of viruses: A perspective in view of COVID-19",
+    "abstract": "Current situation of COVID-19 demands a rapid, reliable, cost-effective, facile detection strategy to break the transmission chain and biosensor has emerged as a feasible solution for this purpose. Introduction of nanomaterials has undoubtedly improved the performance of biosensor and the addition of graphene enhanced the sensing ability to a peerless level. Amongst different graphene-based biosensing schemes, graphene field-effect transistor marked its unique presence owing to its ability of ultrasensitive and low-noise detection thereby facilitating instantaneous measurements even in the presence of small amounts of analytes. Recently, graphene field-effect transistor type biosensor is even successfully employed in rapid detection of SARS-CoV-2 and this triggers the interest of the scientific community in reviewing the current developments in graphene field-effect transistor. Subsequently, in this article, the recent progress in graphene field-effect transistor type biosensors for the detection of the virus is reviewed and challenges along with their strengths are discussed.",
+    "authors": [
+      "Joydip Sengupta",
+      "Chaudhery Mustansar Hussain"
+    ],
+    "year": 2020,
+    "doi": "10.1016/j.cartre.2020.100011",
+    "url": "http://arxiv.org/abs/2012.05543v1",
+    "source": "rag"
+  },
+  {
+    "title": "A spin field effect transistor for low leakage current",
+    "abstract": "In a spin field effect transistor, a magnetic field is inevitably present in the channel because of the ferromagnetic source and drain contacts. This field causes random unwanted spin precession when carriers interact with non-magnetic impurities. The randomized spins lead to a large leakage current when the transistor is in the ``off''-state, resulting in significant standby power dissipation. We can counter this effect of the magnetic field by engineering the Dresselhaus spin-orbit interaction in the channel with a backgate. For realistic device parameters, a nearly perfect cancellation is possible, which should result in a low leakage current.",
+    "authors": [
+      "S. Bandyopadhyay",
+      "M. Cahay"
+    ],
+    "year": 2004,
+    "doi": "10.1016/j.physe.2004.07.009",
+    "url": "http://arxiv.org/abs/cond-mat/0407177v2",
+    "source": "rag"
+  },
+  {
+    "title": "Magnetic properties of wurtzite (Ga,Mn)As",
+    "abstract": "Here we report on detailed studies of the magnetic properties of the wurtzite (Ga,Mn)As cylindrical shells. Ga$_{0.94}$Mn$_{0.06}$As shells have been grown by molecular beam epitaxy at low temperature as a part of multishell cylinders overgrown on wurtzite (Ga,In)As nanowires cores, synthesized on GaAs (111)B substrates. Our studies clearly indicate the presence of a low temperature ferromagnetic coupling, which despite a reasonably high Mn contents of 6\\% is limited only to below 30~K. A set of dedicated measurements shows that despite a high structural quality of the material the magnetic order has a granular form, which gives rise to the dynamical slow-down characteristic to blocked superparamagnets. The lack of the long range order has been assigned to a very low hole density, caused primarily by numerous compensation donors, arsenic antisites, formed in the material due to a specific geometry of the growth of the shells on the nanowire template. The associated electrostatic disorder has formed a patchwork of spontaneously magnetized (macrospin) and nonmagnetic (paramagnetic) volumes in the material. Using high field results it has been evaluated that the total volume taken by the macrospins constitute about 2/3 of the volume of the (Ga,Mn)As whereas in the remaining 1/3 only paramagnetic Mn ions reside. By establishing the number of the uncoupled ions the two contributions were separated. The Arrott plot method applied to the superparamagnetic part yielded the first experimental assessment of the magnitude of the spin-spin coupling temperature within the macrospins in (Ga,Mn)As, $T_{\\mathrm{C}}=28$~K. In a broader view our results constitute an important contribution to the still ongoing dispute on the true and the dominant form(s) of the magnetism in this model dilute ferromagnetic semiconductor.",
+    "authors": [
+      "Katarzyna Gas",
+      "Janusz Sadowski",
+      "Maciej Sawicki"
+    ],
+    "year": 2021,
+    "doi": "10.1016/j.jmmm.2021.168012",
+    "url": "http://arxiv.org/abs/2101.07194v1",
+    "source": "rag"
+  },
+  {
+    "title": "Improved-Sensitivity Integral SQUID Magnetometry of (Ga,Mn)N Thin Films in Proximity to Mg-doped GaN",
+    "abstract": "Nominally 45 nm GaN:Mg/ 5 nm (Ga,Mn)N / 45 nm GaN:Mg trilayers structures prepared by molecular beam epitaxy on GaN-buffered Al2O3 substrates are investigated to verify whether the indirect co-doping by holes from the cladding layers can alter the spin-spin interaction in (Ga,Mn)N. The four investigated structures, differing with the Mg doping level, are carefully characterized at the nanoscale by HRTEM, EDX, and by SIMS. HRTEM decisively excluded a presence of foreign Mn-rich phases. The structures, up to medium Mg doping, show no Mg over-doping effects. Magnetic studies of these structures are aided by the employment of a dedicated experimental approach of the in situ compensation of the magnetic contribution from the substrate, allowing up to about fifty-fold reduction of this contribution. This technique, dedicated to these structures, simultaneously provides a tenfold reduction of temporal instabilities of the magnetometric unit and lowers the experimental jitter to merely $5 \\times 10^{-7}$~emu at 70~kOe, vastly increasing the precision and the credibility of the results of the standard integral SQUID magnetometry in high magnetic fields. The magnetic characteristics of the trilayers structures established here prove identical with the already known properties of the thick (Ga,Mn)N single layers, namely (i) the low temperature ferromagnetism among Mn$^{3+}$ ions driven by superexchange and (ii) purely paramagnetic response at higher temperatures. The possible cause of the lack of any effects brought about by the adjacent Mg-doping is a presence of residual Mn in the cladding layers, resulting in the deactivation of the p-type doping intended there. This finding points out that a more intensive technological effort has to be exerted to promote the co-doping-driven carrier-mediated ferromagnetic coupling in Mn-enriched GaN, especially at elevated temperatures.",
+    "authors": [
+      "Katarzyna Gas",
+      "Gerd Kunert",
+      "Piotr Dluzewski",
+      "Rafal Jakiela",
+      "Detlef Hommel",
+      "Maciej Sawicki"
+    ],
+    "year": 2021,
+    "doi": "10.1016/j.jallcom.2021.159119",
+    "url": "http://arxiv.org/abs/2101.09804v2",
+    "source": "rag"
+  },
+  {
+    "title": "Wurtzite (Ga,Mn)As nanowire shells with ferromagnetic properties",
+    "abstract": "(Ga,Mn)As in wurtzite crystal structure, is coherently grown by molecular beam epitaxy on the {1100} side facets of wurtizte (Ga,In)As nanowires and further encapsulated by (Ga,Al)As and low temperature GaAs. For the first time a true long-range ferromagnetic magnetic order is observed in non-planar (Ga,Mn)As, which is attributed to a more effective hole confinement in the shell containing Mn by a proper selection/choice of both the core and outer shell materials.",
+    "authors": [
+      "J. Sadowski",
+      "S. Kret",
+      "A. Siusys",
+      "T. Wojciechowski",
+      "K. Gas",
+      "M. F. Islam",
+      "C. M. Canali",
+      "M. Sawicki"
+    ],
+    "year": 2017,
+    "doi": "10.1039/c6nr08070g",
+    "url": "http://arxiv.org/abs/1712.05713v1",
+    "source": "rag"
+  },
+  {
+    "title": "All-wurtzite (In,Ga)As-(Ga,Mn)As core-shell nanowires grown by molecular beam epitaxy",
+    "abstract": "Structural and magnetic properties of (In,Ga)As-(Ga,Mn)As core-shell nanowires grown by molecular beam epitaxy on GaAs(111)B substrate with gold catalyst have been investigated.(In,Ga)As core nanowires were grown at high temperature (500 °C) whereas (Ga,Mn)As shells were deposited on the {1-100} side facets of the cores at much lower temperature (220 °C). High resolution transmission electron microscopy images and high spectral resolution Raman scattering data show that both the cores and the shells of the nanowires have wurtzite crystalline structure. Scanning and transmission electron microscopy observations show smooth (Ga,Mn)As shells containing 5% of Mn epitaxially deposited on (In,Ga)As cores containing about 10% of In, without any misfit dislocations at the core-shell interface. With the In content in the (In,Ga)As cores larger than 5% the (In,Ga)As lattice parameter is higher than that of (Ga,Mn)As and the shell is in the tensile strain state. Elaborated magnetic studies indicate the presence of ferromagnetic coupling in (Ga,Mn)As shells at the temperatures in excess of 33 K. This coupling is maintained only in separated mesoscopic volumes resulting in an overall superparamagnetic behavior which gets blocked below ~17 K.",
+    "authors": [
+      "Aloyzas Siusys",
+      "Janusz Sadowski",
+      "Maciej Sawicki",
+      "Slawomir Kret",
+      "Tomasz Wojciechowski",
+      "Katarzyna Gas",
+      "Wojciech Szuszkiewicz",
+      "Agnieszka Kaminska",
+      "Tomasz Story"
+    ],
+    "year": 2014,
+    "doi": "10.1021/nl500896d",
+    "url": "http://arxiv.org/abs/1409.2805v1",
+    "source": "rag"
+  },
+  {
+    "title": "Influence of Gd-rich precipitates on the martensitic transformation, magnetocaloric effect and mechanical properties of Ni-Mn-In Heusler alloys -- A comparative study",
+    "abstract": "A multi-stimuli cooling cycle can be used to increase the cyclic caloric performance of multicaloric materials like Ni-Mn-In Heusler alloys. However, the use of a uniaxial compressive stress as an additional external stimulus to a magnetic field requires good mechanical stability. Improvement of mechanical stability and strength by doping has been shown in several studies. However, doping is always accompanied by grain refinement and a change in transition temperature. This raises the question of the extent to which mechanical strength is related to grain refinement, transition temperature, or precipitates. This study shows a direct comparison between a single-phase Ni-Mn-Sn and a two-phase Gd-doped Ni-Mn-In alloy with the same transition temperature and grain size. It is shown that the excellent magnetocaloric properties of the Ni-Mn-In matrix are maintained with doping. The isothermal entropy change and adiabatic temperature change are reduced by only 15% in the two-phase Ni-Mn-In-Heusler alloy compared to the single-phase alloy, which is resulting from a slight increase in thermal hysteresis and the width of the transition. Due to the same grain size and transition temperature, this effect can be directly related to the precipitates. The introduction of Gd precipitates leads to a 100% improvement in mechanical strength, which is significantly lower than the improvement observed for Ni-Mn-In alloys with grain refinement and Gd precipitates. This reveals that a significant contribution to the improved mechanical stability in Gd-doped Heusler alloys is related to grain refinement.",
+    "authors": [
+      "Franziska Scheibel",
+      "Wei Liu",
+      "Lukas Pfeuffer",
+      "Navid Shayanfar",
+      "Andreas Taubel",
+      "Konstantin P. Skokov",
+      "Stefan Riegg",
+      "Yuye Wu",
+      "Oliver Gutfleisch"
+    ],
+    "year": 2023,
+    "doi": "10.1063/5.0143507",
+    "url": "http://arxiv.org/abs/2302.11439v1",
+    "source": "rag"
+  },
+  {
+    "title": "6 -- X-ray absorption spectroscopy in high-entropy material research",
+    "abstract": "This chapter introduces the use of X-ray absorption spectroscopy (XAS) in studying the local electronic and atomic structure of high-entropy materials. The element selectivity of XAS makes it particularly suitable to address the challenges posed by the study of multicomponent compounds. By analysing different parts of the X-ray absorption spectra for each element, one can obtain information on its chemical state from the X-ray absorption near-edge structure (XANES) and its local environment, distortions, and lattice dynamics from the extended X-ray absorption fine structure (EXAFS). The theoretical background underlying X-ray absorption spectra and existing data analysis procedures are briefly described, with particular emphasis on advanced atomistic modelling techniques that enable more reliable extraction of structural information. Finally, an overview of the applications of the XAS technique in studying high-entropy materials is presented.",
+    "authors": [
+      "Alexei Kuzmin"
+    ],
+    "year": 2024,
+    "doi": "10.1016/B978-0-443-22142-2.00006-5",
+    "url": "http://arxiv.org/abs/2411.05944v1",
+    "source": "rag"
+  },
+  {
+    "title": "Plasticity of Zr-Nb-Ti-Ta-Hf high-entropy alloys",
+    "abstract": "We have investigated the plastic deformation properties of non-equiatomic single phase Zr-Nb-Ti-Ta-Hf high-entropy alloys from room temperature up to 300 °C. Uniaxial deformation tests at a constant strain rate of 10$^{-4}$ s$^{-1}$ were performed including incremental tests such as stress-relaxations, strain-rate- and temperature changes in order to determine the thermodynamic activation parameters of the deformation process. The microstructure of deformed samples was characterized by transmission electron microscopy. The strength of the investigated Zr-Nb-Ti-Ta-Hf phase is not as high as the values frequently reported for high-entropy alloys in other systems. We find an activation enthalpy of about 1 eV and a stress dependent activation volume between 0.5 and 2 nm$^3$. The measurement of the activation parameters at higher temperatures is affected by structural changes evolving in the material during plastic deformation.",
+    "authors": [
+      "M. Feuerbacher",
+      "M. Heidelmann",
+      "C. Thomas"
+    ],
+    "year": 2014,
+    "doi": "10.1080/14786435.2015.1028506",
+    "url": "http://arxiv.org/abs/1401.3997v1",
+    "source": "rag"
+  },
+  {
+    "title": "A Spacetime Foam Approach to the Schwarzschild-de Sitter Entropy",
+    "abstract": "The entropy for a black hole in a de Sitter space is approached within the framework of spacetime foam. A simple model, made by $N$ wormholes in a semiclassical approximation, is taken under examination to compute the entropy for such a case. An extension to the extreme case when the black hole and cosmological horizons are equal is discussed.",
+    "authors": [
+      "Remo Garattini"
+    ],
+    "year": 2000,
+    "doi": "10.3390/e2010026",
+    "url": "http://arxiv.org/abs/gr-qc/0003089v1",
+    "source": "rag"
+  },
+  {
+    "title": "Machine Learning and Data Analytics for Design and Manufacturing of High-Entropy Materials Exhibiting Mechanical or Fatigue Properties of Interest",
+    "abstract": "This chapter presents an innovative framework for the application of machine learning and data analytics for the identification of alloys or composites exhibiting certain desired properties of interest. The main focus is on alloys and composites with large composition spaces for structural materials. Such alloys or composites are referred to as high-entropy materials (HEMs) and are here presented primarily in context of structural applications. For each output property of interest, the corresponding driving (input) factors are identified. These input factors may include the material composition, heat treatment, manufacturing process, microstructure, temperature, strain rate, environment, or testing mode. The framework assumes the selection of an optimization technique suitable for the application at hand and the data available. Physics-based models are presented, such as for predicting the ultimate tensile strength (UTS) or fatigue resistance. We devise models capable of accounting for physics-based dependencies. We factor such dependencies into the models as a priori information. In case that an artificial neural network (ANN) is deemed suitable for the applications at hand, it is suggested to employ custom kernel functions consistent with the underlying physics, for the purpose of attaining tighter coupling, better prediction, and for extracting the most out of the - usually limited - input data available.",
+    "authors": [
+      "Baldur Steingrimsson",
+      "Xuesong Fan",
+      "Anand Kulkarni",
+      "Michael C. Gao",
+      "Peter K. Liaw"
+    ],
+    "year": 2020,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2012.07583v1",
+    "source": "rag"
+  },
+  {
+    "title": "Microstructural investigation of hybrid CAD/CAM restorative dental materials by micro-CT and SEM",
+    "abstract": "Objectives: An increasing number of CAD/CAM (computer-aided design/computer-aided manufacturing) hybrid materials have been introduced to the dental market in recent years. In addition, CAD/CAM hybrid materials for additive manufacturing (AM) are becoming more attractive in digital dentistry. Studies on material microstructures using micro-computed tomography ($μ$-CT) combined with scanning electron microscopy (SEM) have only been available to a limited extent so far.\n  Methods: One CAD/CAM three-dimensional- (3D-) printable hybrid material (VarseoSmile Crown plus) and two CAD/CAM millable hybrid materials (Vita Enamic; Voco Grandio), as well as one direct composite material (Ceram.x duo), were included in the present study. Cylindrical samples with a diameter of 2 mm were produced from each material and investigated by means of synchrotron radiation $μ$-CT at a voxel size of 0.65 $μ$m. Different samples from the same materials, obtained by cutting and polishing, were investigated by SEM.\n  Results: The 3D-printed hybrid material showed some agglomerations and a more irregular distribution of fillers, as well as a visible layered macrostructure and a few spherical pores due to the printing process. The CAD/CAM millable hybrid materials revealed a more homogenous distribution of ceramic particles. The direct composite material showed multiple air bubbles and microstructural irregularities based on manual processing.\n  Significance: The $μ$-CT and SEM analysis of the materials revealed different microstructures even though they belong to the same class of materials. It could be shown that $μ$-CT and SEM imaging are valuable tools to understand microstructure and related mechanical properties of materials.",
+    "authors": [
+      "Elisabeth Prause",
+      "Jeremias Hey",
+      "Florian Beuer",
+      "Jamila Yassine",
+      "Bernhard Hesse",
+      "Timm Weitkamp",
+      "Javier Gerber",
+      "Franziska Schmidt"
+    ],
+    "year": 2023,
+    "doi": "10.1016/j.dental.2024.04.006",
+    "url": "http://arxiv.org/abs/2308.07341v2",
+    "source": "rag"
+  },
+  {
+    "title": "Adaptive Optimizable Gaussian Process Regression Linear Least Squares Regression Filtering Method for SEM Images",
+    "abstract": "Scanning Electron Microscopy (SEM) images often suffer from noise contamination, which degrades image quality and affects further analysis. This research presents a complete approach to estimate their Signal-to-Noise Ratio (SNR) and noise variance (NV), and enhance image quality using NV-guided Wiener filter. The main idea of this study is to use a good SNR estimation technique and infuse a machine learning model to estimate NV of the SEM image, which then guides the wiener filter to remove the noise, providing a more robust and accurate SEM image filtering pipeline. First, we investigate five different SNR estimation techniques, namely Nearest Neighbourhood (NN) method, First-Order Linear Interpolation (FOL) method, Nearest Neighbourhood with First-Order Linear Interpolation (NN+FOL) method, Non-Linear Least Squares Regression (NLLSR) method, and Linear Least Squares Regression (LSR) method. It is shown that LSR method to perform better than the rest. Then, Support Vector Machines (SVM) and Gaussian Process Regression (GPR) are tested by pairing it with LSR. In this test, the Optimizable GPR model shows the highest accuracy and it stands as the most effective solution for NV estimation. Combining these results lead to the proposed Adaptive Optimizable Gaussian Process Regression Linear Least Squares Regression (AO-GPRLLSR) Filtering pipeline. The AO-GPRLLSR method generated an estimated noise variance which served as input to NV-guided Wiener filter for improving the quality of SEM images. The proposed method is shown to achieve notable success in estimating SNR and NV of SEM images and leads to lower Mean Squared Error (MSE) after the filtering process.",
+    "authors": [
+      "D. Chee Yong Ong",
+      "I. Bukhori",
+      "K. S. Sim",
+      "K. Beng Gan"
+    ],
+    "year": 2025,
+    "doi": "10.1109/ACCESS.2025.3573389",
+    "url": "http://arxiv.org/abs/2510.07895v1",
+    "source": "rag"
+  },
+  {
+    "title": "The glassy structure of reactive supplementary cementitious materials (SCMs) and recycled glass: Contribution of XRD and Raman spectroscopy to their characterization",
+    "abstract": "This study compares thirteen natural and industrial samples of supplementary or emerging supplementary cementitious materials (SCMs): slag, fly ashes, pozzolan, obsidian, silica fume, and recycled glass. These materials are used or are under consideration for decarbonization in cement plants. XRF, XRD and Raman microspectroscopy were used in order to achieve a deeper understanding of the structural characterization of SCMs. The changes in position and shape of the XRD diffuse halos were compared. Raman spectroscopy was used to study the glass part of the SCM families, to better understand their structure in terms of depolymerization degree, angle, ring size and incorporations into the glass.The chemical composition of each glassy part was also estimated using reverse Bogue calculations. The hump position is correlated with the Raman shift, and with the XRF bulk or with the calculated glass chemical composition of SCMs, in terms of CaO/(SiO2+Al2O3) or network modifiers to formers ratios.",
+    "authors": [
+      "Théodore Serbource",
+      "Mireille Courtial",
+      "Marie-Noëlle de Noirfontaine",
+      "Sandrine Tusseau-Nenez",
+      "Christophe Sandt",
+      "Laurent Izoret"
+    ],
+    "year": 2024,
+    "doi": "10.1016/j.cemconres.2024.107468",
+    "url": "http://arxiv.org/abs/2404.01899v1",
+    "source": "rag"
+  },
+  {
+    "title": "DeepXRD, a Deep Learning Model for Predicting of XRD spectrum from Materials Composition",
+    "abstract": "One of the long-standing problems in materials science is how to predict a material's structure and then its properties given only its composition. Experimental characterization of crystal structures has been widely used for structure determination, which is however too expensive for high-throughput screening. At the same time, directly predicting crystal structures from compositions remains a challenging unsolved problem. Herein we propose a deep learning algorithm for predicting the XRD spectrum given only the composition of a material, which can then be used to infer key structural features for downstream structural analysis such as crystal system or space group classification or crystal lattice parameter determination or materials property predictions. Benchmark studies on two datasets show that our DeepXRD algorithm can achieve good performance for XRD prediction as evaluated over our test sets. It can thus be used in high-throughput screening in the huge materials composition space for new materials discovery.",
+    "authors": [
+      "Rongzhi Dong",
+      "Yong Zhao",
+      "Yuqi Song",
+      "Nihang Fu",
+      "Sadman Sadeed Omee",
+      "Sourin Dey",
+      "Qinyang Li",
+      "Lai Wei",
+      "Jianjun Hu"
+    ],
+    "year": 2022,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2203.14326v1",
+    "source": "rag"
+  },
+  {
+    "title": "Microstructure and phase transformation of nickel-titanium shape memory alloy fabricated by directed energy deposition with in-situ heat treatment",
+    "abstract": "Additive manufacturing has been vastly applied to fabricate various structures of nickel-titanium (NiTi) shape memory alloys due to its flexibility to create complex structures with minimal defects. However, the microstructure heterogeneity and secondary phase formation are two main problems that impede the further application of NiTi alloys. Although post-heat treatment is usually adopted to improve or manipulate NiTi alloy properties, it cannot realize the spatial control of thermal and/or mechanical properties of NiTi alloys. To overcome the limitations of uniform post-heat treatment, this study proposes an in-situ heat treatment strategy that is integrated into the directed energy deposition of NiTi alloys. The proposed method will potentially lead to new manufacturing capabilities to achieve location-dependent performance or property manipulation. The influences of in-situ heat treatment on the thermal and mechanical properties of printed NiTi structures were investigated. The investigations were carried out in terms of thermal cycling, microstructure evolution, and mechanical properties by 3D finite element simulations and experimental characterizations. A low-power laser beam was adopted to localize the in-situ heat treatment only to the current printed layer, facilitating a reverse peritectic reaction and a transient high solution treatment successively. The proposed in-situ heat treatment on the specimen results in a more obvious phase transformation peak in the differential scanning calorimetry curves, about 50%~70% volume reduction for the Ti2Ni phase, and approximately 35 HV reduction on microhardness.",
+    "authors": [
+      "Shiming Gao",
+      "Ojo Philip Bodunde",
+      "Mian Qin",
+      "Wei-Hsin Liao",
+      "Ping Guo"
+    ],
+    "year": 2022,
+    "doi": "10.1016/j.jallcom.2021.162896",
+    "url": "http://arxiv.org/abs/2202.09428v1",
+    "source": "rag"
+  },
+  {
+    "title": "Microstructural engineering by heat treatments of multi-principal element alloys via spinodal mediated phase transformation pathways",
+    "abstract": "Nanoscale multi-phase microstructures observed in multi-principal element alloys (MPEAs) such as $\\rm AlMo_{0.5}NbTa_{0.5}TiZr$, $\\rm Al_{0.5}NbTa_{0.8}Ti_{1.5}V_{0.2}Zr$, $\\rm TiZrNbTa$, $\\rm AlCoCrFeNi$ and $\\rm Fe_{15}Co_{15}Ni_{20}Mn_{20}Cu_{30}$ that exhibit promising mechanical or functional properties may have evolved through spinodal-mediated phase transformation pathways (PTPs). The microstructures in such MPEA systems could be further engineered for targeted applications by appropriately designing the alloy composition and heat-treatment schedule. In this study, we investigate systematically how different heat treatment schedules such as single-step isothermal aging, two-step isothermal aging and continuous cooling alter the interplay among the various factors associated with alloy composition, such as volume fraction of individual phases, lattice misfit and modulus mismatch between the co-existing phases. We have determined the degree to which these factors influence significantly the spinodal-mediated PTPs and the corresponding microstructures by use of high-throughput phase-field simulations. In particular, we demonstrate that the microstructural topology (i.e., which phase forms the continuous matrix and which phase forms discrete precipitates) in the same MPEA having an asymmetric miscibility gap could be inverted simply by a continuous cooling heat treatment. Further, we reveal a rich variety of novel hierarchical microstructures that could be designed using two-step isothermal aging heat treatments in MPEA systems with symmetric or asymmetric miscibility gaps. These simulation results may shed light on novel microstructure design and engineering for the above-mentioned MPEA systems.",
+    "authors": [
+      "Shalini Roy Koneru",
+      "Kamalnath Kadirvel",
+      "Hamish Fraser",
+      "Yunzhi Wang"
+    ],
+    "year": 2023,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2303.15370v2",
+    "source": "rag"
+  },
+  {
+    "title": "Microstructural evolution of a low-alloy steel / nickel superalloy dissimilar metal weld during post-weld heat treatment",
+    "abstract": "The microstructural evolution of a dissimilar metal weld (DMW) obtained by narrow-gap gas tungsten arc welding (NG-GTAW) was investigated after it was subjected to a post-weld heat treatment (PWHT). The case studied here is a joint between low-alloy steel pipes and a stainless steel steam generator using a nickel based alloy as filler material. The fusion boundary that was the focus of this work was that between the low-alloy steel (2.25Cr-1Mo) and the nickel alloy (alloy 82). The difference in matrix phase and chemical composition between the two alloys leads to a large difference in chemical potential for carbon, which is mobile at the PWHT temperature. A number of advanced characterization techniques were used to assess the gradient of composition, hardness and microstructures across the fusion line, both as welded and after PWHT. This complete analysis permits to highlight and understand the main microstructural changes occurring during the PWHT.",
+    "authors": [
+      "Cayo da Silva Lima",
+      "M. Verdier",
+      "F. Robaut",
+      "J. Ghanbaja",
+      "G. Badinier",
+      "T. Marlaud",
+      "C. Tassin",
+      "Hugo P. van Landeghem"
+    ],
+    "year": 2019,
+    "doi": null,
+    "url": "http://arxiv.org/abs/1911.12223v1",
+    "source": "rag"
+  },
+  {
+    "title": "Heat treatment - microstructure - hardness relationships of new nickel-rich nickel-titanium-hafnium alloys developed for tribological applications",
+    "abstract": "The effects of various heat treatments on the microstructure and hardness of new Ni56Ti41Hf3 and Ni56Ti36Hf8 (atomic %) alloys were studied to evaluate the suitability of these materials for tribological applications. A solid-solution strengthening effect due to Hf atoms was observed for the solution annealed (SA) Ni56Ti36Hf8 alloy (716 HV), resulting in a comparable hardness to the Ni56Ti41Hf3 alloy containing 54 vol.% of Ni4Ti3 precipitates (707 HV). In the Ni56Ti41Hf3 alloy, the maximum hardness (752 HV), achieved after aging at 300C for 12 h, was attributed to dense, semi-coherent precipitation of the Ni4Ti3 phase. Unlike the lenticular morphology usually observed within binary NiTi alloys, a blocky Ni4Ti3 morphology formed within Ni56Ti36Hf3 due to a smaller lattice mismatch in the direction normal to the habit plane at the precipitate/matrix interface. The maximum hardness for Ni56Ti36Hf8 (769 HV) was obtained after applying an intermediate aging step (300C for 12 h) followed by normal aging (550C for 4 h). This two-step aging treatment induces dense nanoscale precipitation of two interspersed precipitate phases, namely H-phase and a new cubic Ni-rich precipitate phase, resulting in the highest hardness exhibited yet by this family alloys. The composition of cubic Ni-rich precipitates was measured using atom probe tomography to be approximately Ni61.5Ti31Hf7.5, while HAADF-STEM revealed a 54 atom motif cubic structure (a= 8.87 Angstroms), and electron diffraction showed that the structure belongs to the pm-3m (No. 221) space group.",
+    "authors": [
+      "Sean H. Mills",
+      "Christopher Dellacorte",
+      "Ronald D. Noebe",
+      "Michael J. Mills",
+      "Aaron P. Stebner",
+      "Behnam Amin-Ahmadi"
+    ],
+    "year": 2020,
+    "doi": null,
+    "url": "http://arxiv.org/abs/2009.07962v1",
+    "source": "rag"
+  },
+  {
+    "title": "Heat transfer in buildings : application to air solar heating and Trombe wall design",
+    "abstract": "The aim of this paper is to briefly recall heat transfer modes and explain their integration within a software dedicated to building simulation (CODYRUN). Detailed elements of the validation of this software are presented and two applications are finally discussed. One concerns the modeling of a flat plate air collector and the second focuses on the modeling of Trombe solar walls. In each case, detailed modeling of heat transfer allows precise understanding of thermal and energetic behavior of the studied structures. Recent decades have seen a proliferation of tools for building thermal simulation. These applications cover a wide spectrum from very simplified steady state models to dynamic simulation ones, including computational fluid dynamics modules (Clarke, 2001). These tools are widely available in design offices and engineering firms. They are often used for the design of HVAC systems and still subject to detailed research, particularly with respect to the integration of new fields (specific insulation materials, lighting, pollutants transport, etc.). Available from: http://www.intechopen.com/books/evaporation-condensation-and-heat-transfer/heat-transfer-in-buildings-application-to-solar-air-collector-and-trombe-wall-design",
+    "authors": [
+      "Harry Boyer",
+      "Frédéric Miranville",
+      "Dimitri Bigot",
+      "Stéphane Guichard",
+      "Ingar Idriss",
+      "Aurélien Jean",
+      "Ali Hamada Fakra",
+      "Ted Soubdhan"
+    ],
+    "year": 2012,
+    "doi": "10.5772/23025",
+    "url": "http://arxiv.org/abs/1212.5260v1",
+    "source": "rag"
+  }
+]

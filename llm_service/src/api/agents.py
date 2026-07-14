@@ -34,6 +34,7 @@ async def run_agent(req: AgentRunRequest) -> dict:
         start_stage=req.start_stage,
         mode=req.mode,
         template=req.template,
+        word_limit=req.word_limit,
     )
     status = orch.get_status(agent_id)
     return {"agent_id": agent_id, "status": status}

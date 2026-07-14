@@ -27,11 +27,11 @@ describe('components/HILDialog', () => {
     expect(screen.queryByText('您的审阅 / 编辑')).toBeNull()
   })
 
-  it('非 experiment 阶段渲染 Agent 提议 + TextArea + 4 按钮', () => {
+  it('非 experiment / design 阶段渲染 Agent 提议 + TextArea + 4 按钮', () => {
     render(
       <HILDialog
         open={true}
-        stage="design"
+        stage="discuss"
         message="需确认"
         agentProposal="agent-提议-正文内容"
         onConfirm={() => {}}
@@ -55,7 +55,7 @@ describe('components/HILDialog', () => {
     const { rerender } = render(
       <HILDialog
         open={false}
-        stage="design"
+        stage="discuss"
         message="m"
         agentProposal="initial"
         onConfirm={() => {}}
@@ -67,7 +67,7 @@ describe('components/HILDialog', () => {
     rerender(
       <HILDialog
         open={true}
-        stage="design"
+        stage="discuss"
         message="m"
         agentProposal="initial"
         onConfirm={() => {}}
@@ -85,7 +85,7 @@ describe('components/HILDialog', () => {
     rerender(
       <HILDialog
         open={false}
-        stage="design"
+        stage="discuss"
         message="m"
         agentProposal="initial"
         onConfirm={() => {}}
@@ -97,7 +97,7 @@ describe('components/HILDialog', () => {
     rerender(
       <HILDialog
         open={true}
-        stage="design"
+        stage="discuss"
         message="m"
         agentProposal="initial"
         onConfirm={() => {}}
@@ -114,7 +114,7 @@ describe('components/HILDialog', () => {
     render(
       <HILDialog
         open={true}
-        stage="design"
+        stage="discuss"
         message="m"
         agentProposal="agent 内容"
         onConfirm={() => {}}
@@ -135,7 +135,7 @@ describe('components/HILDialog', () => {
     render(
       <HILDialog
         open={true}
-        stage="design"
+        stage="discuss"
         message="m"
         agentProposal="agent 内容"
         onConfirm={onConfirm}
@@ -154,7 +154,7 @@ describe('components/HILDialog', () => {
     render(
       <HILDialog
         open={true}
-        stage="design"
+        stage="discuss"
         message="m"
         agentProposal="agent 内容"
         onConfirm={() => {}}

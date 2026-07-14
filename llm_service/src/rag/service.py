@@ -36,17 +36,26 @@ class RAGService:
         query: str,
         top_k: Optional[int] = None,
         filters: Optional[dict[str, Any]] = None,
+        final_k: Optional[int] = None,
     ) -> list[dict[str, Any]]:
         """混合检索。
 
         返回 [{doc_id, content, score, metadata}]，无数据时返回空列表。
+
+        参数：
+            top_k:    初检（向量 + BM25）的候选数量
+            final_k:  重排后最终返回的数量；默认取 min(rerank_top_k, top_k)，
+                      调用方显式指定时以 min(final_k, top_k) 为准
         """
         if not query or not query.strip():
             return []
 
         top_k = top_k or settings.rag_top_k
         rerank_top_k = settings.rag_rerank_top_k
-        final_k = min(rerank_top_k, top_k)
+        if final_k is not None:
+            final_k_eff = min(final_k, top_k)
+        else:
+            final_k_eff = min(rerank_top_k, top_k)
 
         # 1. 向量检索
         vec_results = self._safe_vector_query(query, n_results=top_k, where=filters)
@@ -63,11 +72,11 @@ class RAGService:
 
         # 4. bge-reranker 二次排序
         try:
-            reranked = rerank(query, merged, top_k=final_k)
+            reranked = rerank(query, merged, top_k=final_k_eff)
         except Exception as e:  # 重排序失败时降级使用合并分数
             logger.warning("reranker 失败，降级使用原始分数：%s", e)
             merged.sort(key=lambda x: float(x.get("score", 0.0)), reverse=True)
-            reranked = merged[:final_k]
+            reranked = merged[:final_k_eff]
 
         # 5. 返回 top N
         return reranked

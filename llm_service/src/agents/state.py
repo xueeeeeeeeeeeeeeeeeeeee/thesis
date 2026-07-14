@@ -26,6 +26,7 @@ class AgentState(TypedDict, total=False):
     # ---------- 流水线配置 ----------
     mode: str                  # 'auto' / 'manual'
     template: str              # 'ctex' / 'ieee' / 'journal' / 'markdown'
+    word_limit: int            # 论文目标字数
     # ---------- 核心产出（按阶段逐步累加）----------
     literature: list[dict]        # 文献列表 → artifacts.literature
     experiment_design: dict       # 实验方案 → artifacts.design

@@ -39,24 +39,40 @@ def _section(sections: dict[str, Any], key: str, default: str = "（未生成）
 
 
 def _format_refs(literature: list[dict]) -> str:
-    """把文献列表格式化为参考文献条目。"""
+    """把文献列表格式化为学术参考文献条目（GB/T 7714 风格简化版）。"""
     if not literature:
         return "（暂无参考文献）"
     lines: list[str] = []
     for i, lit in enumerate(literature, 1):
         title = _safe(lit.get("title"), "[无题名]")
         authors = lit.get("authors") or []
-        author_str = ", ".join(authors) if authors else "未知作者"
+        # 作者格式：最多 3 名，超过用"等"
+        if authors:
+            if len(authors) <= 3:
+                author_str = ", ".join(authors)
+            else:
+                author_str = ", ".join(authors[:3]) + ", 等"
+        else:
+            author_str = "佚名"
         year = lit.get("year") or "n.d."
-        source = lit.get("source") or "unknown"
         doi = lit.get("doi")
         url = lit.get("url")
-        tail = ""
+        source = lit.get("source") or ""
+        # 构建引用尾部
+        tail_parts: list[str] = []
         if doi:
-            tail = f", DOI: {doi}"
+            tail_parts.append(f"DOI: {doi}")
         elif url:
-            tail = f", URL: {url}"
-        lines.append(f"[{i}] {author_str} ({year}). {title}. [{source}]{tail}")
+            tail_parts.append(f"URL: {url}")
+        # 标注来源类型（非用户上传的才标注检索来源）
+        source_tag = ""
+        if source and source not in ("unknown", "placeholder", "user_upload", "llm"):
+            source_tag = f" [{source}]"
+        elif source == "user_upload":
+            source_tag = " [用户上传]"
+        tail = ", ".join(tail_parts)
+        tail_str = f". {tail}" if tail else ""
+        lines.append(f"[{i}] {author_str}. {title}[{year}]{source_tag}{tail_str}")
     return "\n".join(lines)
 
 

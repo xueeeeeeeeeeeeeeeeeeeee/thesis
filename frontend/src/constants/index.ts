@@ -135,6 +135,12 @@ export const DRAFT_TEMPLATES: {
     ext: '.tex',
     description: '中文学术期刊 LaTeX 模板',
   },
+  {
+    key: 'docx',
+    label: 'Word 文档 (.docx)',
+    ext: '.docx',
+    description: '真实 Word 文档，自动嵌入 figure 阶段生成的图片',
+  },
 ]
 
 // 学科适配器列表

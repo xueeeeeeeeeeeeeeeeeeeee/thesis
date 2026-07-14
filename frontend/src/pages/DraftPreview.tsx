@@ -29,7 +29,7 @@ import type { DraftTemplate, StageKey } from '@/types'
 
 const { Text, Title, Paragraph } = Typography
 
-// 简易 Markdown 渲染：把 # 标题、** 加粗、- 列表 转 HTML
+// 简易 Markdown 渲染：把 # 标题、** 加粗、- 列表、![alt](data:image/...) 转 HTML
 const renderMarkdown = (md: string): React.ReactNode => {
   const lines = md.split('\n')
   const out: React.ReactNode[] = []
@@ -47,6 +47,29 @@ const renderMarkdown = (md: string): React.ReactNode => {
     )
     listBuffer = []
   }
+  // 提取段落里的 ![alt](data:image/png;base64,...) 渲染为 <img>
+  const renderInlineImages = (text: string): React.ReactNode[] => {
+    const re = /!\[([^\]]*)\]\((data:image\/[a-zA-Z0-9+.\-/]+;base64,[A-Za-z0-9+/=]+)\)/g
+    const parts: React.ReactNode[] = []
+    let last = 0
+    let m: RegExpExecArray | null
+    let key = 0
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > last) parts.push(text.slice(last, m.index))
+      parts.push(
+        <div key={`img-${key++}`} style={{ textAlign: 'center', margin: '12px 0' }}>
+          <img
+            src={m[2]}
+            alt={m[1]}
+            style={{ maxWidth: '100%', border: '1px solid #e2e8f0', borderRadius: 6 }}
+          />
+        </div>,
+      )
+      last = m.index + m[0].length
+    }
+    if (last < text.length) parts.push(text.slice(last))
+    return parts
+  }
   lines.forEach((rawLine, idx) => {
     const line = rawLine.replace(/\r$/, '')
     if (line.startsWith('# ')) {
@@ -63,6 +86,13 @@ const renderMarkdown = (md: string): React.ReactNode => {
           {line.slice(3)}
         </Title>,
       )
+    } else if (line.startsWith('### ')) {
+      flushList()
+      out.push(
+        <Title key={idx} level={4} style={{ marginTop: 12, marginBottom: 4, color: '#1e40af' }}>
+          {line.slice(4)}
+        </Title>,
+      )
     } else if (line.startsWith('- ')) {
       listBuffer.push(line.slice(2))
     } else if (line.trim() === '') {
@@ -72,14 +102,26 @@ const renderMarkdown = (md: string): React.ReactNode => {
       const inline = line
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .replace(/`([^`]+)`/g, '<code>$1</code>')
-      out.push(
+      const htmlRendered = (
         <Paragraph
           key={idx}
           style={{ fontSize: 14, lineHeight: 1.8, margin: '6px 0' }}
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: inline }}
-        />,
+        />
       )
+      // 若该行包含 base64 图片，把图片段独立渲染（不破坏 HTML bold/code 解析）
+      if (line.includes('![alt](data:image/') || line.includes('![') && line.includes('data:image/')) {
+        out.push(
+          <div key={idx}>
+            {renderInlineImages(line).map((n, i) => (
+              <span key={i}>{n}</span>
+            ))}
+          </div>,
+        )
+      } else {
+        out.push(htmlRendered)
+      }
     }
   })
   flushList()
@@ -106,10 +148,8 @@ const DraftPreview: React.FC = () => {
 
   useEffect(() => {
     if (!projectId) return
-    // 若 store 里没有数据，启动流水线拉取
-    if (!draftText) {
-      void startPipeline(projectId).then(() => loadDraft(projectId))
-    }
+    // 预览页必须按 URL projectId 重新加载草稿，避免复用上一个项目的全局 draftText。
+    void startPipeline(projectId).then(() => loadDraft(projectId))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId])
 
@@ -240,6 +280,47 @@ const DraftPreview: React.FC = () => {
         ) : mode === 'preview' ? (
           template === 'markdown' ? (
             <div style={{ padding: 8 }}>{renderMarkdown(draftText)}</div>
+          ) : template === 'docx' ? (
+            <div style={{ padding: 24, textAlign: 'center' }}>
+              <FileTextOutlined style={{ fontSize: 48, color: '#2563eb' }} />
+              <Title level={4} style={{ marginTop: 12 }}>
+                Word 文档 (.docx) 模式
+              </Title>
+              <Paragraph type="secondary">
+                当前模板会输出真实 .docx 二进制，图片以 PNG 内嵌在"图表"章节中。
+                <br />
+                点击右上角"下载初稿"即可获取可在 Word / WPS 中打开的 .docx 文件。
+              </Paragraph>
+              <Button
+                type="primary"
+                size="large"
+                icon={<DownloadOutlined />}
+                loading={downloading}
+                onClick={() => void handleDownload()}
+              >
+                生成并下载 Word 文档
+              </Button>
+              <div style={{ marginTop: 24, textAlign: 'left' }}>
+                <Text strong>文本预览（不含图片二进制）：</Text>
+                <pre
+                  style={{
+                    background: '#0f172a',
+                    color: '#e2e8f0',
+                    padding: 16,
+                    borderRadius: 8,
+                    fontSize: 12,
+                    lineHeight: 1.7,
+                    fontFamily: 'SF Mono, Menlo, Consolas, monospace',
+                    whiteSpace: 'pre-wrap',
+                    marginTop: 8,
+                    maxHeight: 320,
+                    overflow: 'auto',
+                  }}
+                >
+                  {draftText}
+                </pre>
+              </div>
+            </div>
           ) : (
             // LaTeX 模板不支持直接渲染，仅展示源码
             <pre

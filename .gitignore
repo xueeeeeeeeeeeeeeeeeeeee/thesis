@@ -48,3 +48,4 @@ chroma/
 *.sqlite3
 models/
 .cache/
+output/

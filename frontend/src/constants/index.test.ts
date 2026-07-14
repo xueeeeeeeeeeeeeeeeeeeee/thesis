@@ -103,12 +103,12 @@ describe('constants/index', () => {
   })
 
   describe('DRAFT_TEMPLATES', () => {
-    it('包含 markdown/ctex/ieee/journal 四种模板', () => {
+    it('包含 markdown/ctex/ieee/journal/docx 五种模板', () => {
       const keys = DRAFT_TEMPLATES.map((t) => t.key)
       expect(keys).toEqual(
-        expect.arrayContaining(['markdown', 'ctex', 'ieee', 'journal']),
+        expect.arrayContaining(['markdown', 'ctex', 'ieee', 'journal', 'docx']),
       )
-      expect(keys).toHaveLength(4)
+      expect(keys).toHaveLength(5)
     })
 
     it('每项包含 ext 与 description', () => {

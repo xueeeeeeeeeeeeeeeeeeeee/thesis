@@ -15,6 +15,7 @@ from unittest.mock import patch
 import pytest
 
 from src.agents.experiment_agent import (
+    _get_discipline_hint,
     _is_user_inputed,
     _summarize_user_metrics,
     node,
@@ -80,6 +81,75 @@ class TestIsUserInputed:
 
     def test_empty_dict_returns_false(self):
         assert _is_user_inputed({}) is False
+
+
+def test_material_societal_impact_hint_is_evidence_synthesis_not_lab_work():
+    hint = _get_discipline_hint("Material", "新材料对人类社会的影响")
+
+    assert "利益相关方" in hint
+    assert "案例比较" in hint
+    assert "XRD" not in hint
+    assert "炉温" not in hint
+
+
+async def test_material_societal_impact_node_prompt_avoids_lab_protocol(monkeypatch):
+    captured: dict[str, str] = {}
+
+    async def capture_prompt(prompt, tier="economical"):
+        captured["prompt"] = prompt
+        return ""
+
+    monkeypatch.setattr("src.agents.experiment_agent.llm_generate", capture_prompt)
+    await node(
+        {
+            "question": "新材料对人类社会的影响",
+            "discipline": "Material",
+            "experiment_design": {},
+            "experiment_results": {},
+            "history": [],
+            "errors": [],
+            "artifacts": {},
+        }
+    )
+
+    assert "利益相关方" in captured["prompt"]
+    assert "案例比较" in captured["prompt"]
+    assert "XRD" not in captured["prompt"]
+    assert "强度 200-800 MPa" not in captured["prompt"]
+
+
+async def test_material_societal_impact_rejects_lab_execution_from_llm(monkeypatch):
+    async def wrong_execution(prompt, tier="economical"):
+        return json.dumps(
+            {
+                "methodology": "记录制备批次，使用 XRD 和 SEM/TEM 表征",
+                "materials": "原料纯度、配比和炉温程序",
+                "procedure": "1. 烧结；2. 热处理；3. XRD",
+                "metrics": [{"name": "抗压强度", "value": "500", "unit": "MPa"}],
+                "resultsDescription": "模拟强度提升",
+                "rawLogs": "XRD scan complete",
+            },
+            ensure_ascii=False,
+        )
+
+    monkeypatch.setattr("src.agents.experiment_agent.llm_generate", wrong_execution)
+    result = await node(
+        {
+            "question": "新材料对人类社会的影响",
+            "discipline": "Material",
+            "experiment_design": {},
+            "experiment_results": {},
+            "history": [],
+            "errors": [],
+            "artifacts": {},
+        }
+    )
+
+    execution_text = str(result["experiment_results"])
+    assert "利益相关方" in execution_text
+    assert "案例比较" in execution_text
+    assert "XRD" not in execution_text
+    assert "热处理" not in execution_text
 
 
 # ============================================================================
@@ -254,7 +324,7 @@ class TestNodeLLMBranch:
         assert result["history"][0]["action"] == "experiment_run"
 
     async def test_llm_returns_json_with_code(self, base_state, monkeypatch):
-        # 分支 B：mock llm_generate 返回带 code 的 JSON → 走 LLM 解析路径
+        # 分支 B：mock llm_generate 返回带 code 的 JSON → 走兼容旧版转换路径
         llm_output = json.dumps(
             {
                 "code": "import torch\nmodel = torch.nn.Linear(10, 2)",
@@ -272,14 +342,50 @@ class TestNodeLLMBranch:
         er = result["experiment_results"]
         assert er["source"] == "agent"
         assert er["status"] == "completed"
-        assert er["code"] == "import torch\nmodel = torch.nn.Linear(10, 2)"
-        assert er["logs"] == ["[INFO] training", "[INFO] done"]
-        assert er["metrics"]["accuracy"] == 0.88
-        # raw 应保留原始 LLM 输出
-        assert er["raw"] == llm_output
+        # 兼容旧版格式被转换为新 schema
+        assert er["methodology"]  # 非空
+        assert er["procedure"] == "import torch\nmodel = torch.nn.Linear(10, 2)"
+        # metrics 从 dict 转为 list
+        assert isinstance(er["metrics"], list)
+        names = [m["name"] for m in er["metrics"]]
+        assert "accuracy" in names
+        assert "f1" in names
+
+    async def test_llm_returns_structured_json(self, base_state, monkeypatch):
+        # 分支 B：mock llm_generate 返回增强版结构化 JSON → 直接采用
+        llm_output = json.dumps(
+            {
+                "source": "agent",
+                "methodology": "对比实验方法",
+                "materials": "CIFAR-10 数据集，50000 张训练图片",
+                "procedure": "1. 数据预处理\n2. 模型构建\n3. 训练\n4. 评估",
+                "metrics": [
+                    {"name": "accuracy", "value": "0.88", "unit": "", "note": "基线 0.82"},
+                    {"name": "f1", "value": "0.85", "unit": "", "note": ""},
+                ],
+                "resultsDescription": "模型在测试集上达到 88% 准确率。",
+                "rawLogs": "[10:00] [INFO] training started\n[10:05] [INFO] done",
+            }
+        )
+
+        async def _json_llm(prompt, tier="economical"):
+            return llm_output
+
+        monkeypatch.setattr("src.agents.experiment_agent.llm_generate", _json_llm)
+
+        result = await node(base_state)
+        er = result["experiment_results"]
+        assert er["source"] == "agent"
+        assert er["status"] == "completed"
+        assert er["methodology"] == "对比实验方法"
+        assert er["materials"] == "CIFAR-10 数据集，50000 张训练图片"
+        assert er["procedure"] == "1. 数据预处理\n2. 模型构建\n3. 训练\n4. 评估"
+        assert len(er["metrics"]) == 2
+        assert er["metrics"][0]["name"] == "accuracy"
+        assert er["resultsDescription"] == "模型在测试集上达到 88% 准确率。"
 
     async def test_llm_returns_no_code_goes_placeholder(self, base_state, monkeypatch):
-        # LLM 返回 JSON 但无 code 字段 → 走 placeholder
+        # LLM 返回 JSON 但无 methodology 和 code → 走 placeholder
         async def _no_code_llm(prompt, tier="economical"):
             return json.dumps({"logs": ["no code here"]})
 
